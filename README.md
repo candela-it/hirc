@@ -29,7 +29,7 @@ Simple development workflow
 * push your local branch changes: `git push origin mybranch:mybranch`
 * create a pull request against the blessed repo
 * same principles can be applied when working with other developers repositories:
-  * `git remote add other_developer git@github.com:other_developer/hirc.git'
+  * `git remote add other_developer git@github.com:other_developer/hirc.git`
   * `git fetch other_developer`
   * `git checkout other_developer/his_branch`
   * ...
