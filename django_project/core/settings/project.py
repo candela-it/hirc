@@ -5,7 +5,7 @@ DATABASES = {
         # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         # Or path to database file if using sqlite3.
-        'NAME': '',
+        'NAME': 'hirc_dev',
         # The following settings are not used with sqlite3:
         'USER': '',
         'PASSWORD': '',
