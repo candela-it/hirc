@@ -1,0 +1,8 @@
+Django
+South
+psycopg2
+django-braces
+django-model-utils
+django-pipeline
+
+# raven

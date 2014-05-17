@@ -1,0 +1,18 @@
+-r REQUIREMENTS.txt
+
+django-nose
+coverage
+nose-exclude
+pep8
+pylint
+
+django-devserver
+
+# documentation
+Sphinx
+
+# pdb plus plus
+pdbpp
+
+# hizashi-project environment
+hizashi-utils
