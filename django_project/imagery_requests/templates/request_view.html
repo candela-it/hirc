@@ -18,7 +18,7 @@
             </p>
         </div>
         <div class="column">
-            Request map
+            <div id="map" style="height: 500px;"></div>
         </div>
     </div>
     <div class="one column row">
@@ -33,3 +33,18 @@
     </div>
 </div>
 {% endblock content %}
+
+{% block extra_js %}
+    <script type="text/javascript">
+        var map = L.map('map').setView([51.505, -0.09], 2);
+        var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+        var osmAttrib = 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+        var osmTiles = L.tileLayer(osmUrl, {attribution: osmAttrib});
+
+        map.addLayer(osmTiles);
+
+        var geojsonPolygon = jQuery.parseJSON('{{ object.area_of_interest.geojson|safe }}');
+
+        L.geoJson(geojsonPolygon).addTo(map);
+    </script>
+{% endblock %}
