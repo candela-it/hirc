@@ -19,9 +19,18 @@
         <div class="item">
             <span class="ui orange button"  href="#"><i class="help icon"></i> About</span>
         </div>
-        <div class="item">
-            <a class="ui orange button"  href="#"><i class="user icon"></i> Login</a>
-        </div>
+        {% if user.is_authenticated %}
+            <div class="item">
+                <i class="user icon"></i> {{ user.username }}
+            </div>
+            <div class="item">
+                <a class="ui button" href="{% url 'logout_user' %}"> Logout</a>
+            </div>
+        {% else %}
+            <div class="item">
+                <a class="ui orange button" href="{% url 'social:begin' 'openstreetmap' %}"><i class="user icon"></i> Login</a>
+            </div>
+        {% endif %}
     </div>
 </div>
 {% block content %}
