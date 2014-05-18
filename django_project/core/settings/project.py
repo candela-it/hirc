@@ -20,6 +20,7 @@ DATABASES = {
 # Project apps
 INSTALLED_APPS += (
     'imagery_requests',
+    'questions'
 )
 
 # Set debug to false for production

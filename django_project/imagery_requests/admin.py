@@ -1,7 +1,9 @@
 from django.contrib import admin
 
-# class aModelAdmin(admin.ModelAdmin):
-#    pass
+from .models import RequestStatus
 
-# admin.site.register(aModel, aModelAdmin):
-#    pass
+
+class RequestStatusAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(RequestStatus, RequestStatusAdmin)
