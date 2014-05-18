@@ -20,14 +20,26 @@ DATABASES = {
 # Project apps
 INSTALLED_APPS += (
     'imagery_requests',
+    'questions',
     'web',
-    'questions'
+    'social.apps.django_app.default'
 )
 
+# custom user for the project
 AUTH_USER_MODEL = 'imagery_requests.CustomUser'
 
 # Set debug to false for production
 DEBUG = TEMPLATE_DEBUG = False
+
+
+# python social auth required settings
+AUTHENTICATION_BACKENDS = (
+    'social.backends.openstreetmap.OpenStreetMapOAuth',
+    'django.contrib.auth.backends.ModelBackend'
+)
+
+SOCIAL_AUTH_OPENSTREETMAP_KEY = 'LBqrPd0Y3YE9RKkn4RUVc5sDDcoVjbYpart7qdsr'
+SOCIAL_AUTH_OPENSTREETMAP_SECRET = 'sFlquDZLeU1aqsYCIbMAetLVrELunyIvV7mPCR2Q'
 
 
 PIPELINE_JS = {
