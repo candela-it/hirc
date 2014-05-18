@@ -2,13 +2,13 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.contrib.gis.db import models
-from django.contrib.auth.models import User
 from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 
 from core.model_utilities import TimeStampedModelMixin
 
 
-class CustomUser(User):
+class CustomUser(AbstractUser):
     phone = models.CharField(max_length=15)
     address = models.CharField(max_length=50)
 
