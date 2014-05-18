@@ -3,9 +3,16 @@ logger = logging.getLogger(__name__)
 
 import django.forms as forms
 
-# class aModelForm(forms.ModelForm):
-#     class Meta:
-#         model = aModel
+from .models import ImageryRequest
 
-#     def __init__(self, *args, **kwargs):
-#         super(aModelForm, self).__init__(*args, **kwargs)
+
+class ImageryRequestForm(forms.ModelForm):
+    class Meta:
+        model = ImageryRequest
+        fields = ['title', 'description', 'area_of_interest']
+        widgets = {
+            'title': forms.TextInput(
+                attrs={'placeholder': 'Enter project title'}),
+            'description': forms.TextInput(
+                attrs={'placeholder': 'Enter project description'}),
+        }
