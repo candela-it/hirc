@@ -16,6 +16,9 @@ class CustomUser(AbstractUser):
 class RequestStatus(TimeStampedModelMixin, models.Model):
     title = models.CharField(max_length=15)
 
+    def __unicode__(self):
+        return self.title
+
 
 class RequestDate(TimeStampedModelMixin, models.Model):
     date = models.DateField(help_text='Date of the request')
@@ -23,6 +26,12 @@ class RequestDate(TimeStampedModelMixin, models.Model):
         null=True, blank=True, help_text='Time of the request'
     )
     imagery_request = models.ForeignKey('ImageryRequest')
+
+    def __unicode__(self):
+        if self.time:
+            return u'{} ({})'.format(self.date, self.time)
+        else:
+            return u'{}'.format(self.date)
 
 
 class ImageryRequest(TimeStampedModelMixin, models.Model):
@@ -49,3 +58,6 @@ class ImageryRequest(TimeStampedModelMixin, models.Model):
 
     # default manager
     objects = models.GeoManager()
+
+    def __unicode__(self):
+        return self.title
