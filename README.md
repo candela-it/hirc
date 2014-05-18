@@ -77,3 +77,4 @@ Development updates
 * drop *auth_user* table: `psql -c 'DROP TABLE auth_user cascade;' hirc_dev`
 * install django-reversion: `pip install django-reversion`
 * migrate: `python manage.py migrate reversion`
+** `python manage.py migrate imagery_requests 0004`

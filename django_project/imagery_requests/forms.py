@@ -7,7 +7,7 @@ from .models import ImageryRequest
 
 
 class ImageryRequestForm(forms.ModelForm):
-    polygon = forms.CharField(widget=forms.Textarea({'hidden': ''}))
+    area_of_interest = forms.CharField(widget=forms.Textarea({'hidden': ''}))
 
     class Meta:
         model = ImageryRequest
@@ -47,7 +47,7 @@ class ImageryRequestEditForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        super(ImageryRequestForm, self).__init__(*args, **kwargs)
+        super(ImageryRequestEditForm, self).__init__(*args, **kwargs)
         self.fields['question_set'].empty_label = None
         # following line needed to refresh widget copy of choice list
         self.fields['question_set'].widget.choices = (

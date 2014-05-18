@@ -4,6 +4,7 @@ logger = logging.getLogger(__name__)
 from django.contrib.gis.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.core.urlresolvers import reverse
 
 import reversion
 
@@ -66,6 +67,9 @@ class ImageryRequest(TimeStampedModelMixin, models.Model):
 
     def __unicode__(self):
         return self.title
+
+    def get_absolute_url(self):
+        return reverse('view_request', args=[str(self.id)])
 
 # register model with reversion
 reversion.register(ImageryRequest)
