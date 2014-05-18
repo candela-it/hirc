@@ -3,7 +3,7 @@
 {% block content %}
 <div class="ui one column page grid">
   <div class="column">
-    <form  action="" method="post" enctype="multipart/form-data" id="new_project">{% csrf_token %}
+    <form  action="" method="post" enctype="multipart/form-data" id="new_request">{% csrf_token %}
         <div class="ui form segment">
           <div class="field">
             {{form.title.label_tag}}
@@ -29,7 +29,7 @@
             <label>Imagery request area of interest:</label>
             <div id="map" class="map" style="height: 450px"></div>
           </div>
-          {{ form.polygon }}
+          {{ form.area_of_interest }}
           {% for radio in form.question_set %}
             <div class="field">
                 <label>Question set:</label>
@@ -98,7 +98,7 @@
         drawnItems.addLayer(layer);
 
         // dump to textarea
-        $('#id_polygon').val(JSON.stringify(layer.toGeoJSON()));
+        $('#id_area_of_interest').val(JSON.stringify(layer.toGeoJSON()['geometry']));
     });
 
     map.on('draw:drawstop', function (e) {
@@ -108,22 +108,22 @@
     map.on('draw:edited', function (e) {
         var layers = e.layers;
         layers.eachLayer(function (layer) {
-            $('#id_polygon').val(JSON.stringify(layer.toGeoJSON()));
+            $('#id_area_of_interest').val(JSON.stringify(layer.toGeoJSON()['geometry']));
         });
     });
 
     map.on('draw:deleted', function (e) {
         var layers = e.layers;
         layers.eachLayer(function (layer) {
-            $('#id_polygon').val('');
+            $('#id_area_of_interest').val('');
         });
     });
 
-    $('#id_polygon').change('input propertychange', function(e) {
+    $('#id_area_of_interest').change('input propertychange', function(e) {
 
       drawnItems.clearLayers();
 
-      polygon = $('#id_polygon').val();
+      polygon = $('#id_area_of_interest').val();
       geojsonFeature = jQuery.parseJSON(polygon);
 
       L.geoJson(geojsonFeature).addTo(drawnItems);
