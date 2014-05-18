@@ -5,6 +5,8 @@ from django.contrib.gis.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 
+import reversion
+
 from core.model_utilities import TimeStampedModelMixin
 
 
@@ -32,6 +34,9 @@ class RequestDate(TimeStampedModelMixin, models.Model):
             return u'{} ({})'.format(self.date, self.time)
         else:
             return u'{}'.format(self.date)
+
+# register model with reversion
+reversion.register(RequestDate)
 
 
 class ImageryRequest(TimeStampedModelMixin, models.Model):
@@ -61,3 +66,6 @@ class ImageryRequest(TimeStampedModelMixin, models.Model):
 
     def __unicode__(self):
         return self.title
+
+# register model with reversion
+reversion.register(ImageryRequest)
