@@ -71,5 +71,22 @@ class ImageryRequest(TimeStampedModelMixin, models.Model):
     def get_absolute_url(self):
         return reverse('view_request', args=[str(self.id)])
 
+    def questions_and_answers(self):
+        questions = self.question_set.questions.all().values(
+            'id', 'text'
+        )
+        answers = self.answer_set.all().values(
+            'id', 'question', 'text'
+        )
+        for i, qu in enumerate(questions):
+            for an in answers:
+                if an['question'] == qu['id']:
+                    questions[i].update({'answer': an})
+                    break
+            else:
+                questions[i].update({'answer': {'text': 'No answer'}})
+        return questions
+
+
 # register model with reversion
 reversion.register(ImageryRequest)
