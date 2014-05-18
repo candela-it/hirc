@@ -4,5 +4,6 @@ psycopg2
 django-braces
 django-model-utils
 django-pipeline
+python-social_auth
 
 # raven
