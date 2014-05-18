@@ -67,6 +67,7 @@ Migrating database
   * `python manage.py migrate imagery_requests 0001`
   * `python manage.py migrate imagery_requests 0002`
   * `python manage.py migrate questions 0002`
+  * `python manage.py migrate imagery_requests 0003`
 
 Development updates
 -------------------
