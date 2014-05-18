@@ -42,7 +42,7 @@
           <div class="ui error message">
             <div class="header">We noticed some issues</div>
           </div>
-          <div class="ui right blue labeled icon button submit"><i class="right arrow icon"></i> Submit</div>
+          <button class="ui right blue labeled icon button submit" type="submit"><i class="right arrow icon"></i> Submit</button>
         </div>
     </form>
   </div>
@@ -51,7 +51,9 @@
 
 {% block extra_js %}
   <script type="text/javascript">
-
+    $('.ui.radio.checkbox')
+      .checkbox()
+    ;
     var map = L.map('map').setView([51.505, -0.09], 2);
     var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
     var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
