@@ -22,7 +22,6 @@ INSTALLED_APPS += (
     'imagery_requests',
     'django.contrib.comments',
     'django_comments_xtd',
-    #'django_markup',
     'questions'
 )
 
