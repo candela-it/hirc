@@ -1,0 +1,14 @@
+#map {
+    height: 650px;
+    width: 100%;
+}
+
+.full-page-width {
+    width: 100%;
+}
+
+h1 {
+    font-size: 16px;
+    color: orange;
+    margin: 0;
+}

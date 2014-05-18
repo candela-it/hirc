@@ -20,6 +20,7 @@ DATABASES = {
 # Project apps
 INSTALLED_APPS += (
     'imagery_requests',
+    'web',
 )
 
 # Set debug to false for production
@@ -31,7 +32,9 @@ PIPELINE_JS = {
         'source_filenames': (
             'js/jquery-1.11.1.min.js',
             'js/csrf-ajax.js',
-            'js/underscore-min.js'
+            'js/underscore-min.js',
+            'js/semantic.min.js',
+            'js/leaflet.js'
         ),
         'output_filename': 'js/contrib.js',
     }
@@ -40,6 +43,9 @@ PIPELINE_JS = {
 PIPELINE_CSS = {
     'contrib': {
         'source_filenames': (
+            'css/semantic.min.css',
+            'css/leaflet.css',
+            'css/custom.css',
             # 'css/bootstrap.min.css',
             # 'css/bootstrap-responsive.min.css',
         ),
