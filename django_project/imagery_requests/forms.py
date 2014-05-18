@@ -26,7 +26,7 @@ class ImageryRequestForm(forms.ModelForm):
             self.fields['question_set'].choices)
 
 
-class ImageryRequestFormEdit(forms.ModelForm):
+class ImageryRequestEditForm(forms.ModelForm):
     class Meta:
         model = ImageryRequest
         fields = [

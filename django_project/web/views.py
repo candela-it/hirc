@@ -6,8 +6,8 @@ from django.views.generic.base import TemplateView, View
 from django.views.generic import FormView, ListView, UpdateView, DetailView
 from django.contrib.auth import logout as auth_logout
 
-from imagery_requests.forms import ImageryRequestForm
-from imagery_requests.models import ImageryRequest, ImageryRequestEditForm
+from imagery_requests.forms import ImageryRequestForm, ImageryRequestEditForm
+from imagery_requests.models import ImageryRequest
 
 
 class Home(TemplateView):
