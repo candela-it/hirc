@@ -5,6 +5,7 @@ INSTALLED_APPS += (
     # 'raven.contrib.django',  # enable Raven plugin
     'south',
     'pipeline',
+    'reversion'
 )
 
 # use underscore template function

@@ -1,0 +1,24 @@
+{% extends "base.html"%}
+
+{% block content %}
+<div class="ui vertically divided grid">
+    <div class="two column row">
+        <div class="column">
+            Request details
+        </div>
+        <div class="column">
+            Request map
+        </div>
+    </div>
+    <div class="one column row">
+        <div class="column">
+            {% include "project_qa.html" %}
+        </div>
+    </div>
+    <div class="one column row">
+        <div class="column">
+            {% include "project_comments.html" %}
+        </div>
+    </div>
+</div>
+{% endblock content %}

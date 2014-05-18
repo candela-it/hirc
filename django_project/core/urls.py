@@ -12,8 +12,8 @@ urlpatterns = patterns(
     url(r'^comments/', include('django_comments_xtd.urls')),
     # social-auth urls
     url('', include('social.apps.django_app.urls', namespace='social')),
+
     # web app urls
     url(r'', include('web.urls')),
-    # Examples:
-    # url(r'^hirc_app/', include('hirc_app.foo.urls')),
+    url(r'', include('imagery_requests.urls'))
 )

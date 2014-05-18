@@ -1,0 +1,133 @@
+{% extends "base.html"%}
+
+{% block content %}
+<div class="ui one column page grid">
+  <div class="column">
+    <form  action="" method="post" enctype="multipart/form-data" id="new_request">{% csrf_token %}
+        <div class="ui form segment">
+          <div class="field">
+            {{form.title.label_tag}}
+            <div class="ui left labeled icon input">
+                {{ form.title }}
+                <i class="info letter icon"></i>
+                <div class="ui corner label">
+                    <i class="icon asterisk"></i>
+                </div>
+            </div>
+          </div>
+          <div class="field">
+            {{form.description.label_tag}}
+            <div class="ui left labeled icon input">
+              {{ form.description }}
+              <i class="text file icon"></i>
+              <div class="ui corner label">
+                <i class="icon asterisk"></i>
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Imagery request area of interest:</label>
+            <div id="map" class="map" style="height: 450px"></div>
+          </div>
+          {{ form.area_of_interest }}
+          {% for radio in form.question_set %}
+            <div class="field">
+                <label>Question set:</label>
+              <div class="ui radio checkbox">
+                {{ radio.tag }}
+                <label>{{ radio.choice_label }}</label>
+              </div>
+            </div>
+          {% endfor %}
+          <div class="ui error message">
+            <div class="header">We noticed some issues</div>
+          </div>
+          <button class="ui right blue labeled icon button submit" type="submit"><i class="right arrow icon"></i> Submit</button>
+        </div>
+    </form>
+  </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+  <script type="text/javascript">
+    $('.ui.radio.checkbox')
+      .checkbox()
+    ;
+    var map = L.map('map').setView([51.505, -0.09], 2);
+    var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+    var osm = new L.TileLayer(osmUrl, {attribution: osmAttrib});
+    map.addLayer(osm);
+
+    // Initialise the FeatureGroup to store editable layers
+    var drawnItems = new L.FeatureGroup();
+    map.addLayer(drawnItems);
+
+    // Initialise the draw control and pass it the FeatureGroup of editable layers
+    var drawControl = new L.Control.Draw({
+      draw: {
+        polygon: {
+          allowIntersection: false,
+          drawError: {
+                    color: '#e1e100',
+                    message: 'Draw normal polygons!'
+                },
+                shapeOptions: {
+                    color: '#FFA500'
+                }
+        },
+            polyline: false,
+            rectangle: false,
+            circle: false,
+            marker: false,
+      },
+        edit: {
+            featureGroup: drawnItems
+        }
+    });
+    map.addControl(drawControl);
+
+    map.on('draw:created', function (e) {
+        var type = e.layerType;
+        var layer = e.layer;
+
+        // delete previous layer
+        drawnItems.clearLayers();
+
+        drawnItems.addLayer(layer);
+
+        // dump to textarea
+        $('#id_area_of_interest').val(JSON.stringify(layer.toGeoJSON()['geometry']));
+    });
+
+    map.on('draw:drawstop', function (e) {
+      var type = e.layerType;
+    });
+
+    map.on('draw:edited', function (e) {
+        var layers = e.layers;
+        layers.eachLayer(function (layer) {
+            $('#id_area_of_interest').val(JSON.stringify(layer.toGeoJSON()['geometry']));
+        });
+    });
+
+    map.on('draw:deleted', function (e) {
+        var layers = e.layers;
+        layers.eachLayer(function (layer) {
+            $('#id_area_of_interest').val('');
+        });
+    });
+
+    $('#id_area_of_interest').change('input propertychange', function(e) {
+
+      drawnItems.clearLayers();
+
+      polygon = $('#id_area_of_interest').val();
+      geojsonFeature = jQuery.parseJSON(polygon);
+
+      L.geoJson(geojsonFeature).addTo(drawnItems);
+    });
+
+  </script>
+{% endblock %}

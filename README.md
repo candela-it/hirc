@@ -74,4 +74,7 @@ Development updates
 
 * install python-social-auth: `pip install python-social-auth`
 * sync python-social-auth models: `python manage.py syncdb`
-  * it's safe to delete *auth | user* if asked
+* drop *auth_user* table: `psql -c 'DROP TABLE auth_user cascade;' hirc_dev`
+* install django-reversion: `pip install django-reversion`
+* migrate: `python manage.py migrate reversion`
+* `python manage.py migrate imagery_requests 0004`

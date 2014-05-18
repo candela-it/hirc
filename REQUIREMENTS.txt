@@ -6,5 +6,6 @@ django-model-utils
 django-pipeline
 django-comments-xtd
 python-social_auth
+django-reversion
 
 # raven

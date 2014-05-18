@@ -30,6 +30,9 @@ INSTALLED_APPS += (
 # custom user for the project
 AUTH_USER_MODEL = 'imagery_requests.CustomUser'
 
+# redirect logged in user to the home page
+LOGIN_REDIRECT_URL = '/'
+
 # Set debug to false for production
 DEBUG = TEMPLATE_DEBUG = False
 
@@ -42,7 +45,6 @@ COMMENTS_XTD_MAX_THREAD_LEVEL = 4
 # python social auth required settings
 AUTHENTICATION_BACKENDS = (
     'social.backends.openstreetmap.OpenStreetMapOAuth',
-    'django.contrib.auth.backends.ModelBackend'
 )
 
 SOCIAL_AUTH_OPENSTREETMAP_KEY = 'LBqrPd0Y3YE9RKkn4RUVc5sDDcoVjbYpart7qdsr'
@@ -56,7 +58,8 @@ PIPELINE_JS = {
             'js/csrf-ajax.js',
             'js/underscore-min.js',
             'js/semantic.min.js',
-            'js/leaflet.js'
+            'js/leaflet.js',
+            'js/leaflet.draw.js',
         ),
         'output_filename': 'js/contrib.js',
     }
@@ -67,6 +70,7 @@ PIPELINE_CSS = {
         'source_filenames': (
             'css/semantic.min.css',
             'css/leaflet.css',
+            'css/leaflet.draw.css',
             'css/custom.css',
             # 'css/bootstrap.min.css',
             # 'css/bootstrap-responsive.min.css',
