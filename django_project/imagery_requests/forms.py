@@ -38,7 +38,6 @@ class ImageryRequestEditForm(forms.ModelForm):
             'description',
             'area_of_interest',
             'question_set',
-            'status'
         ]
         widgets = {
             'title': forms.TextInput(
