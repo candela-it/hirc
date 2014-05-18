@@ -74,4 +74,6 @@ Development updates
 
 * install python-social-auth: `pip install python-social-auth`
 * sync python-social-auth models: `python manage.py syncdb`
-* drop *auth_user* table: `psql -c 'DROP TABLE auth_user cascade'; hirc_dev`
+* drop *auth_user* table: `psql -c 'DROP TABLE auth_user cascade;' hirc_dev`
+* install django-reversion: `pip install django-reversion`
+* migrate: `python manage.py migrate reversion`

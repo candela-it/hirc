@@ -1,0 +1,43 @@
+[
+{
+    "pk": 1, 
+    "model": "questions.questionset", 
+    "fields": {
+        "questions": [
+            1, 
+            2, 
+            3, 
+            4
+        ], 
+        "title": "Standard Question Set"
+    }
+},
+{
+    "pk": 1, 
+    "model": "questions.question", 
+    "fields": {
+        "text": "What is the purpose of your imagery request?"
+    }
+},
+{
+    "pk": 2, 
+    "model": "questions.question", 
+    "fields": {
+        "text": "What sort of analysis do you intend to conduct using the requested imagery?"
+    }
+},
+{
+    "pk": 3, 
+    "model": "questions.question", 
+    "fields": {
+        "text": "What sort of data do you intend to create?"
+    }
+},
+{
+    "pk": 4, 
+    "model": "questions.question", 
+    "fields": {
+        "text": "What sort of products do you intend to generate using the imagery or imagery-derived data, and how will they be disseminated?"
+    }
+}
+]
