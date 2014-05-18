@@ -67,3 +67,11 @@ Migrating database
   * `python manage.py migrate imagery_requests 0001`
   * `python manage.py migrate imagery_requests 0002`
   * `python manage.py migrate questions 0002`
+  * `python manage.py migrate imagery_requests 0003`
+
+Development updates
+-------------------
+
+* install python-social-auth: `pip install python-social-auth`
+* sync python-social-auth models: `python manage.py syncdb`
+  * it's safe to delete *auth | user* if asked
