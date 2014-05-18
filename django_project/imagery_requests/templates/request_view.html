@@ -4,7 +4,18 @@
 <div class="ui vertically divided grid">
     <div class="two column row">
         <div class="column">
-            Request details
+            <h2>{{ object.title }}</h2>
+            <div class="ui segment">
+                <p>{{ object.description }}</p>
+            </div>
+            <p style="font-size: 12px;">created by: <strong>{{ object.created_by }}</strong> <br>
+            request status: <strong>{{ object.status }}</strong> <br>
+            question set: <strong>{{ object.question_set }}</strong>
+
+            {% if object.request_leader %}
+                <br> request leader: {{ object.request_leader }}
+            {% endif %}
+            </p>
         </div>
         <div class="column">
             Request map
@@ -12,12 +23,12 @@
     </div>
     <div class="one column row">
         <div class="column">
-            {% include "project_qa.html" %}
+            {% include "request_qa.html" %}
         </div>
     </div>
     <div class="one column row">
         <div class="column">
-            {% include "project_comments.html" %}
+            {% include "request_comments.html" %}
         </div>
     </div>
 </div>
