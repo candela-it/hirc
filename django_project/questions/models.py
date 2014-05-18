@@ -3,6 +3,8 @@ logger = logging.getLogger(__name__)
 
 from django.db import models
 
+import reversion
+
 from core.model_utilities import TimeStampedModelMixin
 
 
@@ -20,6 +22,9 @@ class Question(TimeStampedModelMixin, models.Model):
     def __unicode__(self):
         return self.text
 
+# register model with reversion
+reversion.register(Question)
+
 
 class Answer(TimeStampedModelMixin, models.Model):
     text = models.TextField(help_text='Answer text')
@@ -27,3 +32,6 @@ class Answer(TimeStampedModelMixin, models.Model):
 
     def __unicode__(self):
         return self.text
+
+# register model with reversion
+reversion.register(Answer)

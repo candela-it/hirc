@@ -3,7 +3,7 @@
 {% block content %}
 <div class="ui one column page grid">
   <div class="column">
-    <a class="ui orange labeled icon button" href="{% url 'addproject' %}"><i class="plus icon"></i> Add project</a>
+    <a class="ui orange labeled icon button" href="{% url 'add_request' %}"><i class="plus icon"></i> Add imagery request</a>
     <table class="ui table segment">
     <thead><tr>
         <th>Name</th>
@@ -11,15 +11,15 @@
         <th></th>
     </tr></thead>
     <tbody>
-        {% for project in projects.all %}
+        {% for request in requests.all %}
                 <tr>
-                    <td>{{ project.title }}</td>
-                    <td>{{ project.status }}</td>
+                    <td>{{ request.title }}</td>
+                    <td>{{ request.status }}</td>
                     <td>
                         <div class="ui buttons">
-                            <a class="ui button" href="{% url 'viewproject' project.id %}">Open</a>
+                            <a class="ui button" href="{% url 'view_request' request.id %}">Open</a>
                             <div class="or"></div>
-                            <a class="ui blue button" href="{% url 'editproject' project.id %}">Edit</a>
+                            <a class="ui blue button" href="{% url 'edit_request' request.id %}">Edit</a>
                         </div>
                     </td>
                 </tr>
