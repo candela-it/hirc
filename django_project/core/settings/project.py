@@ -20,6 +20,7 @@ DATABASES = {
 # Project apps
 INSTALLED_APPS += (
     'imagery_requests',
+    'questions'
 )
 
 AUTH_USER_MODEL = 'imagery_requests.CustomUser'
