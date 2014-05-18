@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>{% block title%} Generic page {% endblock title%}</title>
+    <title>{% block title%} HOT Imagery requests coordination service {% endblock title%}</title>
     <meta http-equiv="content-type" content="text/html;charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -11,10 +11,27 @@
 </head>
 
 <body>
+<div class="ui secondary pointing menu">
+    <div class="item">
+        <h1>HOT Imagery requests coordination service</h1>
+    </div>
+    <div class="right menu">
+        <div class="item">
+            <span class="ui orange button"  href="#"><i class="help icon"></i> About</span>
+        </div>
+        <div class="item">
+            <a class="ui orange button"  href="#"><i class="user icon"></i> Login</a>
+        </div>
+    </div>
+</div>
 {% block content %}
 
 {% endblock content %}
 
 {% compressed_js 'contrib' %}
+
+{% block extra_js %}
+
+{% endblock extra_js %}
 </body>
 </html>
