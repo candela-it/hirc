@@ -7,7 +7,7 @@ from .models import ImageryRequest
 
 
 class ImageryRequestForm(forms.ModelForm):
-    polygon = forms.CharField()
+    polygon = forms.CharField(widget=forms.Textarea({'hidden': ''}))
 
     class Meta:
         model = ImageryRequest
@@ -18,7 +18,6 @@ class ImageryRequestForm(forms.ModelForm):
             'description': forms.TextInput(
                 attrs={'placeholder': 'Enter project description'}),
             'question_set': forms.RadioSelect(),
-            'polygon': forms.Textarea()
         }
 
     def __init__(self, *args, **kwargs):
