@@ -28,6 +28,9 @@ INSTALLED_APPS += (
 # custom user for the project
 AUTH_USER_MODEL = 'imagery_requests.CustomUser'
 
+# redirect logged in user to the home page
+LOGIN_REDIRECT_URL = '/'
+
 # Set debug to false for production
 DEBUG = TEMPLATE_DEBUG = False
 
@@ -35,7 +38,6 @@ DEBUG = TEMPLATE_DEBUG = False
 # python social auth required settings
 AUTHENTICATION_BACKENDS = (
     'social.backends.openstreetmap.OpenStreetMapOAuth',
-    'django.contrib.auth.backends.ModelBackend'
 )
 
 SOCIAL_AUTH_OPENSTREETMAP_KEY = 'LBqrPd0Y3YE9RKkn4RUVc5sDDcoVjbYpart7qdsr'
