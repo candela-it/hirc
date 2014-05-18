@@ -1,0 +1,27 @@
+<div class="ui minimal">
+	{% for comment in comment_list %}
+
+	{% for num in comment.level|get_range %}
+	<div class="comments">
+	{% endfor %}
+		<div class="comment">
+			<div class="content">
+				<a class="author">{{ comment.name }}</a>
+				<div class="metadata">
+					<span class="date">{{ comment.submit_date }}</span>
+				</div>
+				<div class="text">
+					{{ comment.comment}}
+				</div>
+				<div class="actions">
+					{% if comment.allow_thread %}<a class="reply" href="{{ comment.get_reply_url }}">Reply</a>{% endif %}
+					<a class="delete" href="{% url 'delete_own_comment' comment.id %}">Delete</a>
+				</div>
+			</div>
+		</div>
+	{% for num in comment.level|get_range %}
+	</div>
+	{% endfor %}
+
+	{% endfor %}
+</div>
