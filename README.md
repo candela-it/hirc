@@ -7,7 +7,7 @@ Development
 Virtual machine configuration
 -----------------------------
 
-* download and import VirtualBox Appliance ()
+* download and import VirtualBox Appliance (http://candela-it.com/hirc.ova)
   * ubuntu 14.04 with postgresql9.3 and postgis2.1
   * username:password `cit:cit`
   * forwarded ports
