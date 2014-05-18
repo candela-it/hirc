@@ -11,39 +11,19 @@
         <th></th>
     </tr></thead>
     <tbody>
-        <tr>
-            <td>Guinea Ebola Outbreak, N'zérékoré</td>
-            <td>Open</td>
-            <td>
-                <div class="ui buttons">
-                    <div class="ui button">Open</div>
-                    <div class="or"></div>
-                    <div class="ui blue button">Edit</div>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td>Guinea Ebola Outbreak, Macenta</td>
-            <td>Open</td>
-            <td>
-                <div class="ui buttons">
-                    <div class="ui button">Open</div>
-                    <div class="or"></div>
-                    <div class="ui blue button">Edit</div>
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td>Central African Republic, Vakaga, Birao</td>
-            <td>Open</td>
-            <td>
-                <div class="ui buttons">
-                    <div class="ui button">Open</div>
-                    <div class="or"></div>
-                    <div class="ui blue button">Edit</div>
-                </div>
-            </td>
-        </tr>
+        {% for project in projects.all %}
+                <tr>
+                    <td>{{ project.title }}</td>
+                    <td>{{ project.status }}</td>
+                    <td>
+                        <div class="ui buttons">
+                            <div class="ui button">Open</div>
+                            <div class="or"></div>
+                            <div class="ui blue button">Edit</div>
+                        </div>
+                    </td>
+                </tr>
+        {% endfor %}
     </tbody>
     <tfoot><tr>
         <th colspan="3">
