@@ -1,7 +1,16 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 
-# class aModelAdmin(admin.ModelAdmin):
-#    pass
+from .models import RequestStatus, CustomUser
 
-# admin.site.register(aModel, aModelAdmin):
-#    pass
+
+class CustomUserAdmin(UserAdmin):
+    pass
+
+admin.site.register(CustomUser, CustomUserAdmin)
+
+
+class RequestStatusAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(RequestStatus, RequestStatusAdmin)

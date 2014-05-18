@@ -57,3 +57,13 @@ Coding standards
 ----------------
 
 * for better or worse we'll base it on: http://inasafe.org/en/developer-docs/coding_standards.html
+
+
+Migrating database
+------------------
+
+* database migrations are somewhat fiddly in the beginning
+  * `python manage.py migrate questions 0001`
+  * `python manage.py migrate imagery_requests 0001`
+  * `python manage.py migrate imagery_requests 0002`
+  * `python manage.py migrate questions 0002`
