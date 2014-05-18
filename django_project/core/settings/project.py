@@ -53,6 +53,8 @@ PIPELINE_JS = {
             'js/semantic.min.js',
             'js/leaflet.js',
             'js/leaflet.draw.js',
+            'js/leaflet-omnivore.min.js',
+            'js/tiles/Bing.js'
         ),
         'output_filename': 'js/contrib.js',
     }

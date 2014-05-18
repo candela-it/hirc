@@ -29,6 +29,8 @@ class ImageryRequestForm(forms.ModelForm):
 
 
 class ImageryRequestEditForm(forms.ModelForm):
+    area_of_interest = forms.CharField(widget=forms.Textarea({'hidden': ''}))
+
     class Meta:
         model = ImageryRequest
         fields = [
@@ -36,7 +38,6 @@ class ImageryRequestEditForm(forms.ModelForm):
             'description',
             'area_of_interest',
             'question_set',
-            'status'
         ]
         widgets = {
             'title': forms.TextInput(
