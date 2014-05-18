@@ -20,11 +20,18 @@ DATABASES = {
 # Project apps
 INSTALLED_APPS += (
     'imagery_requests',
+    'django.contrib.comments',
+    'django_comments_xtd',
+    #'django_markup',
 )
 
 # Set debug to false for production
 DEBUG = TEMPLATE_DEBUG = False
 
+COMMENTS_APP = "django_comments_xtd"
+COMMENTS_XTD_CONFIRM_EMAIL = False
+#Setting 0 means threaded comments are disabled.
+COMMENTS_XTD_MAX_THREAD_LEVEL = 4
 
 PIPELINE_JS = {
     'contrib': {
