@@ -3,11 +3,11 @@ logger = logging.getLogger(__name__)
 
 from django.http import HttpResponseRedirect
 from django.views.generic.base import TemplateView, View
-from django.views.generic import FormView, ListView
+from django.views.generic import FormView, ListView, UpdateView, DetailView
 from django.contrib.auth import logout as auth_logout
 
 from imagery_requests.forms import ImageryRequestForm
-from imagery_requests.models import ImageryRequest
+from imagery_requests.models import ImageryRequest, ImageryRequestEditForm
 
 
 class Home(TemplateView):
@@ -29,3 +29,14 @@ class LogoutUser(View):
 class AddProject(FormView):
     template_name = 'project_form.html'
     form_class = ImageryRequestForm
+
+
+class EditProject(UpdateView):
+    template_name = 'project_form'
+    form_class = ImageryRequestEditForm
+
+
+class ViewProject(DetailView):
+    context_object_name = 'project'
+    model = ImageryRequest
+    template_name = 'project_view.html'

@@ -25,6 +25,15 @@
               </div>
             </div>
           </div>
+          {% for radio in form.question_set %}
+            <div class="field">
+                <label>Question set:</label>
+              <div class="ui radio checkbox">
+                {{ radio.tag }}
+                <label>{{ radio.choice_label }}</label>
+              </div>
+            </div>
+          {% endfor %}
           <div class="ui error message">
             <div class="header">We noticed some issues</div>
           </div>

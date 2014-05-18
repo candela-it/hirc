@@ -17,9 +17,9 @@
                     <td>{{ project.status }}</td>
                     <td>
                         <div class="ui buttons">
-                            <div class="ui button">Open</div>
+                            <a class="ui button" href="{% url 'viewproject' project.id %}">Open</a>
                             <div class="or"></div>
-                            <div class="ui blue button">Edit</div>
+                            <a class="ui blue button" href="{% url 'editproject' project.id %}">Edit</a>
                         </div>
                     </td>
                 </tr>
