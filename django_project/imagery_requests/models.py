@@ -55,8 +55,8 @@ class ImageryRequest(TimeStampedModelMixin, models.Model):
     description = models.TextField(
         blank=True, help_text='Description of the imagery request'
     )
-    project_lead = models.ForeignKey(
-        settings.AUTH_USER_MODEL, null=True, related_name='project_lead'
+    request_lead = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, related_name='request_lead'
     )
 
     question_set = models.ForeignKey('questions.QuestionSet', null=True)

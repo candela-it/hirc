@@ -14,9 +14,9 @@ class ImageryRequestForm(forms.ModelForm):
         fields = ['title', 'description', 'area_of_interest', 'question_set']
         widgets = {
             'title': forms.TextInput(
-                attrs={'placeholder': 'Enter project title'}),
+                attrs={'placeholder': 'Enter request title'}),
             'description': forms.TextInput(
-                attrs={'placeholder': 'Enter project description'}),
+                attrs={'placeholder': 'Enter request description'}),
             'question_set': forms.RadioSelect(),
         }
 
@@ -40,9 +40,9 @@ class ImageryRequestEditForm(forms.ModelForm):
         ]
         widgets = {
             'title': forms.TextInput(
-                attrs={'placeholder': 'Enter project title'}),
+                attrs={'placeholder': 'Enter request title'}),
             'description': forms.TextInput(
-                attrs={'placeholder': 'Enter project description'}),
+                attrs={'placeholder': 'Enter request description'}),
             'question_set': forms.RadioSelect()
         }
 
