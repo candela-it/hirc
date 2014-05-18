@@ -51,7 +51,8 @@ PIPELINE_JS = {
             'js/csrf-ajax.js',
             'js/underscore-min.js',
             'js/semantic.min.js',
-            'js/leaflet.js'
+            'js/leaflet.js',
+            'js/leaflet.draw.js',
         ),
         'output_filename': 'js/contrib.js',
     }
@@ -62,6 +63,7 @@ PIPELINE_CSS = {
         'source_filenames': (
             'css/semantic.min.css',
             'css/leaflet.css',
+            'css/leaflet.draw.css',
             'css/custom.css',
             # 'css/bootstrap.min.css',
             # 'css/bootstrap-responsive.min.css',

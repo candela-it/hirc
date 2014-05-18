@@ -3,6 +3,7 @@
 {% block content %}
 <div class="ui one column page grid">
   <div class="column">
+    <div id="map" class="map" style="height: 300px"></div>
     <form  action="" method="post" enctype="multipart/form-data" id="new_project">{% csrf_token %}
         <div class="ui form segment">
           <div class="field">
@@ -44,3 +45,84 @@
   </div>
 </div>
 {% endblock content %}
+
+{% block extra_js %}
+  <script type="text/javascript">
+
+    var map = L.map('map').setView([51.505, -0.09], 2);
+    var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+    var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
+    var osm = new L.TileLayer(osmUrl, {attribution: osmAttrib});
+    map.addLayer(osm);
+
+    // Initialise the FeatureGroup to store editable layers
+    var drawnItems = new L.FeatureGroup();
+    map.addLayer(drawnItems);
+
+    // Initialise the draw control and pass it the FeatureGroup of editable layers
+    var drawControl = new L.Control.Draw({
+      draw: {
+        polygon: {
+          allowIntersection: false,
+          drawError: {
+                    color: '#e1e100',
+                    message: 'Draw normal polygons!'
+                },
+                shapeOptions: {
+                    color: '#1836BC'
+                }
+        },
+            polyline: false,
+            rectangle: false,
+            circle: false,
+            marker: false,
+      },
+        edit: {
+            featureGroup: drawnItems
+        }
+    });
+    map.addControl(drawControl);
+
+    map.on('draw:created', function (e) {
+        var type = e.layerType;
+        var layer = e.layer;
+
+        // delete previous layer
+        drawnItems.clearLayers();
+
+        drawnItems.addLayer(layer);
+
+        // dump to textarea
+        $('#id_polygon').val(JSON.stringify(layer.toGeoJSON()));
+    });
+
+    map.on('draw:drawstop', function (e) {
+      var type = e.layerType;
+    });
+
+    map.on('draw:edited', function (e) {
+        var layers = e.layers;
+        layers.eachLayer(function (layer) {
+            $('#id_polygon').val(JSON.stringify(layer.toGeoJSON()));
+        });
+    });
+
+    map.on('draw:deleted', function (e) {
+        var layers = e.layers;
+        layers.eachLayer(function (layer) {
+            $('#id_polygon').val('');
+        });
+    });
+
+    $('#id_polygon').change('input propertychange', function(e) {
+
+      drawnItems.clearLayers();
+
+      polygon = $('#id_polygon').val();
+      geojsonFeature = jQuery.parseJSON(polygon);
+
+      L.geoJson(geojsonFeature).addTo(drawnItems);
+    });
+
+  </script>
+{% endblock %}
