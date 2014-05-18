@@ -3,7 +3,6 @@
 {% block content %}
 <div class="ui one column page grid">
   <div class="column">
-    <div id="map" class="map" style="height: 300px"></div>
     <form  action="" method="post" enctype="multipart/form-data" id="new_project">{% csrf_token %}
         <div class="ui form segment">
           <div class="field">
@@ -26,6 +25,7 @@
               </div>
             </div>
           </div>
+          <div id="map" class="map" style="height: 450px"></div>
           {{ form.polygon }}
           {% for radio in form.question_set %}
             <div class="field">
