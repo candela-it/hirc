@@ -23,7 +23,10 @@ INSTALLED_APPS += (
     'django.contrib.comments',
     'django_comments_xtd',
     #'django_markup',
+    'questions'
 )
+
+AUTH_USER_MODEL = 'imagery_requests.CustomUser'
 
 # Set debug to false for production
 DEBUG = TEMPLATE_DEBUG = False
