@@ -23,6 +23,8 @@ INSTALLED_APPS += (
     'questions'
 )
 
+AUTH_USER_MODEL = 'imagery_requests.CustomUser'
+
 # Set debug to false for production
 DEBUG = TEMPLATE_DEBUG = False
 
