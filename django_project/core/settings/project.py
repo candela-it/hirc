@@ -35,6 +35,7 @@ DEBUG = TEMPLATE_DEBUG = False
 
 COMMENTS_APP = "django_comments_xtd"
 COMMENTS_XTD_CONFIRM_EMAIL = False
+COMMENTS_XTD_THREADED_EMAILS = False
 #Setting 0 means threaded comments are disabled.
 COMMENTS_XTD_MAX_THREAD_LEVEL = 4
 
