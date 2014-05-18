@@ -25,7 +25,10 @@
               </div>
             </div>
           </div>
-          <div id="map" class="map" style="height: 450px"></div>
+          <div class="field">
+            <label>Imagery request area of interest:</label>
+            <div id="map" class="map" style="height: 450px"></div>
+          </div>
           {{ form.polygon }}
           {% for radio in form.question_set %}
             <div class="field">
