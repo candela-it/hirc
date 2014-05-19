@@ -78,3 +78,9 @@ Development updates
 * install django-reversion: `pip install django-reversion`
 * migrate: `python manage.py migrate reversion`
 * `python manage.py migrate imagery_requests 0004`
+
+
+End-of-day updates
+------------------
+
+* `python manage.py migrate questions 0003`
