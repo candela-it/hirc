@@ -41,6 +41,13 @@ function addWorldGeoJson() {
     }
     layergroups = {};
     var bounds;
+    var mouseX;
+    var mouseY;
+    $(document).mousemove( function(e) {
+       mouseX = e.pageX - 100;
+       mouseY = e.pageY - 55;
+       $('#popup').css({'top':mouseY+'px', 'left': mouseX + 'px'});
+    });
     $.get("/worldjson", function(data) {
         _.each(data,  function(requests, status) {
             layergroups[status] = L.featureGroup();
@@ -50,6 +57,7 @@ function addWorldGeoJson() {
                 map.fitBounds(bounds);
             });
             _.each(requests, function(layer, id) {
+                var title = layer.title;
                 var glayer = L.geoJson(
                     jQuery.parseJSON(layer.polygon),
                     {
@@ -61,6 +69,14 @@ function addWorldGeoJson() {
                             $(layer).on('click', function() {
                                 window.location = '/requests/' + id + '/';
                             });
+                            $(layer).hover(
+                                function() {
+                                    $('#popup').html('<p class="popup_elem">'+title+'</p>'+'<p class="popup_elem">'+status+'</p>').show();
+                                },
+                                function() {
+                                    $('#popup').hide();
+                                }
+                            );
                         }
                     }
                 );
