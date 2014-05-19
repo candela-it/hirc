@@ -28,6 +28,10 @@ body {
 	margin-top: 10px !important;
 }
 
+#download-button {
+	margin-top: 5px;
+}
+
 .project-field {
     width: 130px;
     font-weight: bold;
@@ -100,3 +104,4 @@ body {
     right: 20px;
     top: 50px;
  }
+>>>>>>> upstream/master
