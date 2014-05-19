@@ -93,3 +93,10 @@ body {
     padding: 0;
     margin: 0;
 }
+
+.flash_messages {
+    position: absolute;
+    width: 350px;
+    right: 20px;
+    top: 50px;
+ }

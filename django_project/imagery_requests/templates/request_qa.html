@@ -1,20 +1,17 @@
-<div class="ui celled grid">
+<div class="ui answers celled grid">
 
 {% for question in object.questions_and_answers %}
   <div class="row">
     <div class="column">
-            <p>
-                edit
-            </p>
-    </div>
-    <div class="thirteen wide column">
+
         <div class="ui message">
             <div class="header">
                 {{ question.text }}
             </div>
-            <p>
-                {{ question.answer.text }}
-            </p>
+            <div class="ui answer left icon fluid input">
+                <i data-question-id="{{ question.id }}" data-request-id="{{ request.id }}" class="answer disabled save icon"></i>
+                <input class="answer" placeholder="Answer" type="text" value="{{ question.answer.text }}">
+            </div>
         </div>
     </div>
   </div>
