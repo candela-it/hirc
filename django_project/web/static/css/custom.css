@@ -21,3 +21,10 @@ body {
 	/* fix for semantic UI messing it up inside form */
 	margin-top: 10px !important;
 }
+
+.flash_messages {
+    position: absolute;
+    width: 350px;
+    right: 20px;
+    top: 50px;
+ }

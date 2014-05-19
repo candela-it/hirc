@@ -1,8 +1,11 @@
 from django.conf.urls import patterns, url
 
+from .views import UpdateAnswer
 
 urlpatterns = patterns(
     '',
-    # basic app views
-    # url(r'^...', a_view)
+    url(
+        r'^answer/add/(?P<req_id>\d+)/(?P<que_id>\d+)$',
+        UpdateAnswer.as_view(), name='add_answer'
+    )
 )

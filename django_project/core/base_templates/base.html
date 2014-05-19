@@ -43,10 +43,21 @@
 
 {% endblock content %}
 
+<div class='flash_messages'>
+</div>
+
 {% compressed_js 'contrib' %}
 
 {% block extra_js %}
 
 {% endblock extra_js %}
+<script type="text/javascript">
+$('.flash_messages').on('click', '.message .close', function(evt) {
+    var fl_message = $(this).closest('.message');
+    fl_message.transition('fade out', {
+        'complete': function() {fl_message.remove();}
+    });
+});
+</script>
 </body>
 </html>
