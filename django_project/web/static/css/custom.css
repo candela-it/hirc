@@ -13,6 +13,12 @@ h1 {
     margin: 0;
 }
 
+h2 {
+    font-size: 14px;
+    color: orange;
+    margin: 0;
+}
+
 body {
     font-family: "Open Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif/*rtl:prepend:"Droid Arabic Kufi","Droid Sans", */;
 }
@@ -20,6 +26,72 @@ body {
 .leaflet-control, .leaflet-draw-edit-edit {
 	/* fix for semantic UI messing it up inside form */
 	margin-top: 10px !important;
+}
+
+.project-field {
+    width: 130px;
+    font-weight: bold;
+    text-align: right;
+    padding-right: 15px;
+}
+
+.project-value {
+    width: 300px;
+}
+
+.legend {
+    background: none repeat scroll 0 0 rgba(255, 255, 255, 0.8);
+    border-radius: 3px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    font-family: 'PT Serif',serif;
+    font-size: 12px;
+    padding: 3px 4px;
+    width: 100px;
+}
+
+.box_Done {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: green;
+}
+
+.box_Processing {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: red;
+}
+
+.box_Initiated {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    background-color: blue;
+}
+
+.legend-item {
+    font-size: 10px;
+    margin: 0;
+    padding: 0;
+}
+
+#popup {
+    display: none;
+    background: none repeat scroll 0 0 rgba(255, 255, 255, 0.8);
+    position: absolute;
+    border-radius: 3px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    font-family: 'PT Serif',serif;
+    font-size: 12px;
+    padding: 3px 4px;
+    width: 200px;
+    height: 40px;
+}
+
+.popup_elem {
+    padding: 0;
+    margin: 0;
 }
 
 .flash_messages {

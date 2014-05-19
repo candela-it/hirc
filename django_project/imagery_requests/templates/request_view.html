@@ -4,21 +4,31 @@
 <div class="ui vertically divided grid">
     <div class="two column row">
         <div class="column">
-            <h2>{{ object.title }}</h2>
-            <div class="ui segment">
-                <p>{{ object.description }}</p>
-            </div>
-            <p style="font-size: 12px;">created by: <strong>{{ object.created_by }}</strong> <br>
-            request status: <strong>{{ object.status }}</strong> <br>
-            question set: <strong>{{ object.question_set }}</strong>
-
-            {% if object.request_leader %}
-                <br> request leader: {{ object.request_leader }}
-            {% endif %}
-            </p>
+            <table>
+                <tr>
+                    <td class="project-field">Title:</td>
+                    <td class="project-value">{{ object.title }}</td>
+                </tr>
+                <tr>
+                    <td class="project-field">Desciption:</td>
+                    <td class="project-value">{{ object.description }}</td>
+                </tr>
+                <tr>
+                    <td class="project-field">Created by:</td>
+                    <td class="project-value">{{ object.created_by }}</td>
+                </tr>
+                <tr>
+                    <td class="project-field">Status:</td>
+                    <td class="project-value">{{ object.status }}</td>
+                </tr>
+                <tr>
+                    <td class="project-field">Question set:</td>
+                    <td class="project-value">{{ object.question_set }}</td>
+                </tr>
+            </table>
         </div>
         <div class="column">
-            <div id="map" style="height: 500px;"></div>
+            <div id="map" style="height: 300px;"></div>
         </div>
     </div>
     <div class="one column row">
@@ -37,16 +47,15 @@
 
 {% block extra_js %}
     <script type="text/javascript">
-        var map = L.map('map').setView([51.505, -0.09], 2);
-        var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-        var osmAttrib = 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-        var osmTiles = L.tileLayer(osmUrl, {attribution: osmAttrib});
-
-        map.addLayer(osmTiles);
+        initMap();
 
         var geojsonPolygon = jQuery.parseJSON('{{ object.area_of_interest.geojson|safe }}');
-
-        L.geoJson(geojsonPolygon).addTo(map);
+        var drawnItems = new L.FeatureGroup();
+        drawnItems.on('layeradd', function() {
+            map.fitBounds(drawnItems.getBounds());
+        });
+        var layer = L.geoJson(geojsonPolygon).addTo(drawnItems);
+        map.addLayer(drawnItems);
 
 
         // add click handler for all future 'red icons'
@@ -88,8 +97,6 @@
                 save_icon.toggleClass('disabled').toggleClass('red').toggleClass('link');
             }
         });
-
-        // closable messages
 
     </script>
 {% endblock %}

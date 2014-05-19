@@ -63,12 +63,7 @@
     $('.ui.radio.checkbox')
       .checkbox()
     ;
-    var map = L.map('map').setView([51.505, -0.09], 2);
-    var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-    var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-    var osm = new L.TileLayer(osmUrl, {attribution: osmAttrib});
-    map.addLayer(osm);
-
+    initMap();
     // Initialise the FeatureGroup to store editable layers
     var drawnItems = new L.FeatureGroup();
 
