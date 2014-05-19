@@ -4,6 +4,7 @@ psycopg2
 django-braces
 django-model-utils
 django-pipeline
+django-comments-xtd==1.3a1
 python-social_auth
 django-reversion
 

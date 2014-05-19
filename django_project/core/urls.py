@@ -9,6 +9,7 @@ urlpatterns = patterns(
 
     # Enable the admin:
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^comments/', include('django_comments_xtd.urls')),
     # social-auth urls
     url('', include('social.apps.django_app.urls', namespace='social')),
 

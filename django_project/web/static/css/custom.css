@@ -28,6 +28,14 @@ body {
 	margin-top: 10px !important;
 }
 
+.comment {
+	border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.author {
+    color: #009FDA;
+}
+
 .project-field {
     width: 130px;
     font-weight: bold;

@@ -1,0 +1,18 @@
+{% load comments %}
+
+<h3>Comment</h3>
+<form action="{% comment_form_target %}" method="post" class="ui form segment">{% csrf_token %}
+  {{ form.content_type }}
+  {{ form.object_pk }}
+  {{ form.timestamp }}
+  {{ form.security_hash }}
+  {{ form.reply_to }}
+
+  <div style="display:none;">{{ form.honeypot }}</div>
+  <div class="field">{{ form.email }}</div>
+  <div class="field">{{ form.comment }}</div>
+  <p class="submit">
+    <input type="submit" name="post" class="submit-post ui blue submit button" value="Post" />
+    <input type="hidden" name="next" value="{% url 'view_request' request.id %}" />
+  </p>
+</form>
