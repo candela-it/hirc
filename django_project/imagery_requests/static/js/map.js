@@ -19,6 +19,40 @@ function initMap() {
         'mapbox': mapboxTiles,
         'bing': bingTiles,
       };
-      L.control.layers(overlays).addTo(map);
+    control = L.control.layers(overlays).addTo(map);
+    });
+}
+
+function addWorldGeoJson() {
+    colors = {
+        'Processing': 'red',
+        'Done': 'greed',
+        'Initiated': 'white'
+    }
+
+    layergroups = {};
+    $.get("/worldjson", function(data) {
+        _.each(data,  function(requests, status) {
+            layergroups[status] = L.featureGroup();
+            _.each(requests, function(layer, id) {
+                var glayer = L.geoJson(
+                    jQuery.parseJSON(layer.polygon),
+                    {
+                        style: {
+                            'color': colors[status],
+                            'weight': '1'
+                        },
+                        onEachFeature: function (feature, layer) {
+                            $(layer).on('click', function() {
+                                window.location = '/requests/' + id + '/';
+                            });
+                        }
+                    }
+                );
+                layergroups[status].addLayer(glayer);
+            });
+            map.addLayer(layergroups[status]);
+            control.addOverlay(layergroups[status],status);
+        });
     });
 }

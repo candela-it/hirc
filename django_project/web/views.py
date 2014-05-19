@@ -29,6 +29,10 @@ class WorldGeoJson(JSONResponseMixin, View):
             geometry = {}
             requests = ImageryRequest.objects.filter(status=status)
             for req in requests:
-                geometry[req.id] = req.area_of_interest.geojson
+                geometry[req.id] = {
+                    'id': req.id,
+                    'title': req.title,
+                    'polygon': req.area_of_interest.geojson
+                }
             result[status.title] = geometry
         return self.render_json_response(result)
