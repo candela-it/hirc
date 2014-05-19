@@ -43,9 +43,19 @@ class DownloadRequest(BaseDetailView):
     model = ImageryRequest
 
     def render_to_response(self, context):
-        return self.json_response(context['object'].area_of_interest.geojson)
+        request = context['object']
 
-    def json_response(self, content, **httpresponse_kwargs):
-        return http.HttpResponse(
+        return self.json_response(
+            content=request.area_of_interest.geojson,
+            filename=request.title
+        )
+
+    def json_response(self, content, filename, **httpresponse_kwargs):
+        response = http.HttpResponse(
             content, content_type='application/json', **httpresponse_kwargs
         )
+
+        response['Content-Disposition'] = '{}; filename="{}.geojson"'.format(
+            'attachment', filename)
+
+        return response
