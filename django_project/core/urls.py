@@ -15,5 +15,6 @@ urlpatterns = patterns(
 
     # web app urls
     url(r'', include('web.urls')),
-    url(r'', include('imagery_requests.urls'))
+    url(r'', include('imagery_requests.urls')),
+    url(r'', include('questions.urls'))
 )

@@ -28,6 +28,7 @@ reversion.register(Question)
 
 class Answer(TimeStampedModelMixin, models.Model):
     text = models.TextField(help_text='Answer text')
+    question = models.ForeignKey('Question')
     imagery_request = models.ForeignKey('imagery_requests.ImageryRequest')
 
     def __unicode__(self):

@@ -3,7 +3,8 @@ from django.conf.urls import patterns, url
 from .views import (
     Home,
     LogoutUser,
-    delete_own_comment
+    delete_own_comment,
+    WorldGeoJson
 )
 
 urlpatterns = patterns(
@@ -14,5 +15,6 @@ urlpatterns = patterns(
         delete_own_comment,
         name='delete_own_comment'
     ),
+    url(r'^worldjson$', WorldGeoJson.as_view(), name='worldjson'),
     url(r'^logout$', LogoutUser.as_view(), name='logout_user'),
 )

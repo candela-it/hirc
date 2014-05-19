@@ -29,6 +29,8 @@ class ImageryRequestForm(forms.ModelForm):
 
 
 class ImageryRequestEditForm(forms.ModelForm):
+    area_of_interest = forms.CharField(widget=forms.Textarea({'hidden': ''}))
+
     class Meta:
         model = ImageryRequest
         fields = [
@@ -43,7 +45,8 @@ class ImageryRequestEditForm(forms.ModelForm):
                 attrs={'placeholder': 'Enter request title'}),
             'description': forms.TextInput(
                 attrs={'placeholder': 'Enter request description'}),
-            'question_set': forms.RadioSelect()
+            'question_set': forms.RadioSelect(),
+            'status': forms.RadioSelect()
         }
 
     def __init__(self, *args, **kwargs):

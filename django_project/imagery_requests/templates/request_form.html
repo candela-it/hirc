@@ -16,6 +16,15 @@
             </div>
           </div>
           <div class="field">
+            <label>Status:</label>
+            {% for radio in form.status %}
+                <div class="ui radio checkbox">
+                  {{ radio.tag }}
+                  <label>{{ radio.choice_label }} </label>
+                </div><br />
+            {% endfor %}
+          </div>
+          <div class="field">
             {{form.description.label_tag}}
             <div class="ui left labeled icon input">
               {{ form.description }}
@@ -54,15 +63,9 @@
     $('.ui.radio.checkbox')
       .checkbox()
     ;
-    var map = L.map('map').setView([51.505, -0.09], 2);
-    var osmUrl='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-    var osmAttrib='Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-    var osm = new L.TileLayer(osmUrl, {attribution: osmAttrib});
-    map.addLayer(osm);
-
+    initMap();
     // Initialise the FeatureGroup to store editable layers
     var drawnItems = new L.FeatureGroup();
-    map.addLayer(drawnItems);
 
     // Initialise the draw control and pass it the FeatureGroup of editable layers
     var drawControl = new L.Control.Draw({
@@ -118,16 +121,23 @@
             $('#id_area_of_interest').val('');
         });
     });
-
-    $('#id_area_of_interest').change('input propertychange', function(e) {
-
-      drawnItems.clearLayers();
-
-      polygon = $('#id_area_of_interest').val();
-      geojsonFeature = jQuery.parseJSON(polygon);
-
-      L.geoJson(geojsonFeature).addTo(drawnItems);
+    drawnItems.on('layeradd', function() {
+      map.fitBounds(drawnItems.getBounds());
     });
+    if ( $('#id_area_of_interest').val() != '') {
+      drawnItems.clearLayers();
+      polygon = $('#id_area_of_interest').val();
+      // if polygon is in geojson 
+      if (polygon[0] == '{') {
+        geojsonFeature = jQuery.parseJSON(polygon);
+        L.geoJson(geojsonFeature).addTo(drawnItems);
+      } else {
+        drawnItems.addLayer(omnivore.wkt.parse(polygon));
+      }
+    }
+    map.addLayer(drawnItems);
+
+    //map.fitBounds(drawnItems.getBounds());
 
   </script>
 {% endblock %}
