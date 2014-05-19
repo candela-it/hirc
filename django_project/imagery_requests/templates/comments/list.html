@@ -1,0 +1,21 @@
+{% load comments %}
+<div class="ui piled blue segment">
+	<div class="ui comments">
+		{% for comment in comment_list %}
+		<div class="comment">
+			<div class="content">
+				<a class="author" href="mailto:{{ comment.user_email }}">{{ comment.user }}</a>
+				<div class="metadata">
+					<span class="date">Posted: {{ comment.submit_date }}</span>
+				</div>
+				<div class="text comment-text">
+					{{ comment.comment}}
+				</div>
+				<div class="actions">
+					<a class="delete" href="{% url 'delete_own_comment' comment.id %}">Delete</a>
+				</div>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+</div>

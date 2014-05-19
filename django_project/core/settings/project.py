@@ -36,11 +36,12 @@ LOGIN_REDIRECT_URL = '/'
 # Set debug to false for production
 DEBUG = TEMPLATE_DEBUG = False
 
-COMMENTS_APP = "django_comments_xtd"
+#Emails are disabled.
 COMMENTS_XTD_CONFIRM_EMAIL = False
 COMMENTS_XTD_THREADED_EMAILS = False
 #Setting 0 means threaded comments are disabled.
-COMMENTS_XTD_MAX_THREAD_LEVEL = 4
+COMMENTS_XTD_MAX_THREAD_LEVEL = 0
+COMMENTS_APP = 'django_comments_xtd'
 
 # python social auth required settings
 AUTHENTICATION_BACKENDS = (
