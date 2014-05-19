@@ -24,12 +24,22 @@ function initMap() {
 }
 
 function addWorldGeoJson() {
+    var info = L.control({'position': 'bottomleft'});
+    info.onAdd = function (map) {
+        this.div = L.DomUtil.create('div', 'legend');
+        $(this.div).html('<h2>LEGEND</h2');
+        return this.div;
+      };
+    info.update = function (elem) {
+        $(this.div).append(elem);
+    };
+    info.addTo(map);
     colors = {
         'Processing': 'red',
-        'Done': 'greed',
-        'Initiated': 'white'
+        'Done': 'green',
+        'Initiated': 'blue'
     }
-
+5
     layergroups = {};
     $.get("/worldjson", function(data) {
         _.each(data,  function(requests, status) {
@@ -51,6 +61,7 @@ function addWorldGeoJson() {
                 );
                 layergroups[status].addLayer(glayer);
             });
+            info.update('<p class="legend-item"><span class="box_' + status +'"></span> '+status+'</p>')
             map.addLayer(layergroups[status]);
             control.addOverlay(layergroups[status],status);
         });
