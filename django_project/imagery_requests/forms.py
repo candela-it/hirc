@@ -38,13 +38,15 @@ class ImageryRequestEditForm(forms.ModelForm):
             'description',
             'area_of_interest',
             'question_set',
+            'status'
         ]
         widgets = {
             'title': forms.TextInput(
                 attrs={'placeholder': 'Enter request title'}),
             'description': forms.TextInput(
                 attrs={'placeholder': 'Enter request description'}),
-            'question_set': forms.RadioSelect()
+            'question_set': forms.RadioSelect(),
+            'status': forms.RadioSelect()
         }
 
     def __init__(self, *args, **kwargs):
