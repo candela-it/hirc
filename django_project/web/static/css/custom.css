@@ -21,3 +21,7 @@ body {
 	/* fix for semantic UI messing it up inside form */
 	margin-top: 10px !important;
 }
+
+#download-button {
+	margin-top: 5px;
+}

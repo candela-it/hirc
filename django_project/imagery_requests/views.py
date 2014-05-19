@@ -2,6 +2,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.views.generic import ListView, UpdateView, DetailView, CreateView
+from django.views.generic.detail import BaseDetailView
+from django import http
 
 from .forms import ImageryRequestForm, ImageryRequestEditForm
 from .models import ImageryRequest
@@ -35,3 +37,15 @@ class ViewRequest(DetailView):
     context_object_name = 'request'
     model = ImageryRequest
     template_name = 'request_view.html'
+
+
+class DownloadRequest(BaseDetailView):
+    model = ImageryRequest
+
+    def render_to_response(self, context):
+        return self.json_response(context['object'].area_of_interest.geojson)
+
+    def json_response(self, content, **httpresponse_kwargs):
+        return http.HttpResponse(
+            content, content_type='application/json', **httpresponse_kwargs
+        )

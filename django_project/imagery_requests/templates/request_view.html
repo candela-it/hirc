@@ -4,21 +4,25 @@
 <div class="ui vertically divided grid">
     <div class="two column row">
         <div class="column">
-            <h2>{{ object.title }}</h2>
+            <h2>{{ request.title }}</h2>
             <div class="ui segment">
-                <p>{{ object.description }}</p>
+                <p>{{ request.description }}</p>
             </div>
-            <p style="font-size: 12px;">created by: <strong>{{ object.created_by }}</strong> <br>
-            request status: <strong>{{ object.status }}</strong> <br>
-            question set: <strong>{{ object.question_set }}</strong>
+            <p style="font-size: 12px;">created by: <strong>{{ request.created_by }}</strong> <br>
+            request status: <strong>{{ request.status }}</strong> <br>
+            question set: <strong>{{ request.question_set }}</strong>
 
-            {% if object.request_leader %}
-                <br> request leader: {{ object.request_leader }}
+            {% if request.request_leader %}
+                <br> request leader: {{ request.request_leader }}
             {% endif %}
             </p>
         </div>
         <div class="column">
             <div id="map" style="height: 500px;"></div>
+            <a href="{% url 'download_request' request.id %}">
+            <div id="download-button" class="small ui secondary button">
+              <i class="download icon"></i> Save
+            </div></a>
         </div>
     </div>
     <div class="one column row">
