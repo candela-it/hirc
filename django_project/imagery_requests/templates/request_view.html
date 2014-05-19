@@ -4,25 +4,36 @@
 <div class="ui vertically divided grid">
     <div class="two column row">
         <div class="column">
-            <h2>{{ request.title }}</h2>
-            <div class="ui segment">
-                <p>{{ request.description }}</p>
-            </div>
-            <p style="font-size: 12px;">created by: <strong>{{ request.created_by }}</strong> <br>
-            request status: <strong>{{ request.status }}</strong> <br>
-            question set: <strong>{{ request.question_set }}</strong>
-
-            {% if request.request_leader %}
-                <br> request leader: {{ request.request_leader }}
-            {% endif %}
-            </p>
+            <table>
+                <tr>
+                    <td class="project-field">Title:</td>
+                    <td class="project-value">{{ object.title }}</td>
+                </tr>
+                <tr>
+                    <td class="project-field">Desciption:</td>
+                    <td class="project-value">{{ object.description }}</td>
+                </tr>
+                <tr>
+                    <td class="project-field">Created by:</td>
+                    <td class="project-value">{{ object.created_by }}</td>
+                </tr>
+                <tr>
+                    <td class="project-field">Status:</td>
+                    <td class="project-value">{{ object.status }}</td>
+                </tr>
+                <tr>
+                    <td class="project-field">Question set:</td>
+                    <td class="project-value">{{ object.question_set }}</td>
+                </tr>
+            </table>
         </div>
         <div class="column">
-            <div id="map" style="height: 500px;"></div>
+            <div id="map" style="height: 300px;"></div>
             <a href="{% url 'download_request' request.id %}">
-            <div id="download-button" class="small ui secondary button">
-              <i class="download icon"></i> Download
-            </div></a>
+                <div id="download-button" class="small ui secondary button">
+                  <i class="download icon"></i> Download
+                </div>
+            </a>
         </div>
     </div>
     <div class="one column row">
@@ -36,19 +47,61 @@
         </div>
     </div>
 </div>
+
 {% endblock content %}
 
 {% block extra_js %}
     <script type="text/javascript">
-        var map = L.map('map').setView([51.505, -0.09], 2);
-        var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-        var osmAttrib = 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
-        var osmTiles = L.tileLayer(osmUrl, {attribution: osmAttrib});
-
-        map.addLayer(osmTiles);
+        initMap();
 
         var geojsonPolygon = jQuery.parseJSON('{{ object.area_of_interest.geojson|safe }}');
+        var drawnItems = new L.FeatureGroup();
+        drawnItems.on('layeradd', function() {
+            map.fitBounds(drawnItems.getBounds());
+        });
+        var layer = L.geoJson(geojsonPolygon).addTo(drawnItems);
+        map.addLayer(drawnItems);
 
-        L.geoJson(geojsonPolygon).addTo(map);
+
+        // add click handler for all future 'red icons'
+        $('.ui.answers').on('click', '.answer.save.icon.red.link', function(evt) {
+            var link = '/answer/add/'+this.dataset.requestId+'/'+this.dataset.questionId;
+            var self = this;
+
+            var input_value = $(this).parent().find('input').val() || '';
+            $.ajax(link, {
+                method: 'POST',
+                data: {'text':input_value,'question':this.dataset.questionId, 'imagery_request':this.dataset.requestId}
+            }).done(function () {
+                $(self).toggleClass('red').toggleClass('link').toggleClass('disabled');
+                //flash message
+                var fl_message = $('<div class="ui success message flash"><i class="close icon"></i><div class="header">Answer updated!</div><p></p></div>');
+                $('.flash_messages').append(fl_message);
+                fl_message.transition('bounce');
+                setTimeout(function() {
+                        fl_message.transition('fade out', {
+                            'complete': function() {fl_message.remove();}
+                        });
+                }, 5000)
+            }).fail(function () {
+                //flash message
+                var fl_message = $('<div class="ui error message flash"><i class="close icon"></i><div class="header">Error updating answer</div><p>Answer can\'t be empty!</p></div>');
+                $('.flash_messages').append(fl_message);
+                fl_message.transition('bounce');
+                setTimeout(function() {
+                        fl_message.transition('fade out', {
+                            'complete': function() {fl_message.remove();}
+                        });
+                }, 5000)
+            });
+        });
+
+        $('input.answer').on('focusin', function(evt) {
+            var save_icon = $(this).parent().find('.answer.save');
+            if (save_icon.hasClass('disabled')) {
+                save_icon.toggleClass('disabled').toggleClass('red').toggleClass('link');
+            }
+        });
+
     </script>
 {% endblock %}
