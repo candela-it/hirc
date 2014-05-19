@@ -54,7 +54,8 @@ PIPELINE_JS = {
             'js/leaflet.js',
             'js/leaflet.draw.js',
             'js/leaflet-omnivore.min.js',
-            'js/tiles/Bing.js'
+            'js/tiles/Bing.js',
+            'js/map.js'
         ),
         'output_filename': 'js/contrib.js',
     }
