@@ -51,11 +51,11 @@ function addWorldGeoJson() {
     $.get("/worldjson", function(data) {
         _.each(data,  function(requests, status) {
             layergroups[status] = L.featureGroup();
-            layergroups[status].on('layeradd', function() {
+            /*layergroups[status].on('layeradd', function() {
                 if (typeof bounds == 'undefined') bounds = layergroups[status].getBounds();
                 bounds.extend(layergroups[status].getBounds())
                 map.fitBounds(bounds);
-            });
+            });*/
             _.each(requests, function(layer, id) {
                 var title = layer.title;
                 var glayer = L.geoJson(
@@ -81,7 +81,7 @@ function addWorldGeoJson() {
                     }
                 );
                 layergroups[status].addLayer(glayer);
-                bounds.extend(layergroups[status].getBounds());
+                //bounds.extend(layergroups[status].getBounds());
             });
             info.update('<p class="legend-item"><span class="box_' + status +'"></span> '+status+'</p>')
             map.addLayer(layergroups[status]);
