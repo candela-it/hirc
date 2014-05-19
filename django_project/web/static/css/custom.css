@@ -13,6 +13,12 @@ h1 {
     margin: 0;
 }
 
+h2 {
+    font-size: 14px;
+    color: orange;
+    margin: 0;
+}
+
 body {
     font-family: "Open Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif/*rtl:prepend:"Droid Arabic Kufi","Droid Sans", */;
 }
@@ -20,4 +26,15 @@ body {
 .leaflet-control, .leaflet-draw-edit-edit {
 	/* fix for semantic UI messing it up inside form */
 	margin-top: 10px !important;
+}
+
+.project-field {
+    width: 130px;
+    font-weight: bold;
+    text-align: right;
+    padding-right: 15px;
+}
+
+.project-value {
+    width: 300px;
 }
