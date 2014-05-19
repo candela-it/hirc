@@ -1,5 +1,5 @@
 function initMap() {
-    map = L.map('map').setView([51.505, -0.09], 2);
+    map = L.map('map').fitWorld().setZoom(2);
     var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
     var osmAttrib = 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
     var osmTiles = L.tileLayer(osmUrl, {attribution: osmAttrib});
