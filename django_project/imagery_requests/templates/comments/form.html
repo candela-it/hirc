@@ -1,5 +1,6 @@
 {% load comments %}
 
+<h3>Comment</h3>
 <form action="{% comment_form_target %}" method="post" class="ui form segment">{% csrf_token %}
   {{ form.content_type }}
   {{ form.object_pk }}

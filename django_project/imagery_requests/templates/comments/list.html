@@ -1,4 +1,5 @@
 {% load comments %}
+{% if comment_list %}
 <div class="ui piled blue segment">
 	<div class="ui comments">
 		{% for comment in comment_list %}
@@ -19,3 +20,4 @@
 		{% endfor %}
 	</div>
 </div>
+{% endif %}
