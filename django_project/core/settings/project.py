@@ -20,11 +20,8 @@ DATABASES = {
 # Project apps
 INSTALLED_APPS += (
     'imagery_requests',
-    'django.contrib.comments',
-    'django_comments_xtd',
     'questions',
-    'web',
-    'social.apps.django_app.default'
+    'web'
 )
 
 # custom user for the project
@@ -35,21 +32,6 @@ LOGIN_REDIRECT_URL = '/'
 
 # Set debug to false for production
 DEBUG = TEMPLATE_DEBUG = False
-
-#Emails are disabled.
-COMMENTS_XTD_CONFIRM_EMAIL = False
-COMMENTS_XTD_THREADED_EMAILS = False
-#Setting 0 means threaded comments are disabled.
-COMMENTS_XTD_MAX_THREAD_LEVEL = 0
-COMMENTS_APP = 'django_comments_xtd'
-
-# python social auth required settings
-AUTHENTICATION_BACKENDS = (
-    'social.backends.openstreetmap.OpenStreetMapOAuth',
-)
-
-SOCIAL_AUTH_OPENSTREETMAP_KEY = 'LBqrPd0Y3YE9RKkn4RUVc5sDDcoVjbYpart7qdsr'
-SOCIAL_AUTH_OPENSTREETMAP_SECRET = 'sFlquDZLeU1aqsYCIbMAetLVrELunyIvV7mPCR2Q'
 
 
 PIPELINE_JS = {
