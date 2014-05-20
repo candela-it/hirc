@@ -35,3 +35,17 @@ class ViewRequest(DetailView):
     context_object_name = 'request'
     model = ImageryRequest
     template_name = 'request_view.html'
+
+    def get_context_data(self, **kwargs):
+        """
+        Insert the single object into the context dict.
+        """
+        context = super(ViewRequest, self).get_context_data(**kwargs)
+        from django_comments_xtd.models import XtdComment
+        comment_list = XtdComment.objects.all()
+        for comment in comment_list:
+            # print comment.level
+            pass
+
+        # import pdb; pdb.set_trace()
+        return context

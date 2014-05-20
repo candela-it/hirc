@@ -6,6 +6,7 @@ INSTALLED_APPS += (
     'south',
     'pipeline',
     'reversion',
+    'django.contrib.humanize',
     'django.contrib.comments',
     'django_comments_xtd',
     'social.apps.django_app.default'
