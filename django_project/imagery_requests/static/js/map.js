@@ -1,5 +1,5 @@
 function initMap() {
-    map = L.map('map').fitWorld().setZoom(2);
+    map = L.map('map').setView([0, 0], 4);
     var osmUrl = 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
     var osmAttrib = 'Map data © <a href="http://openstreetmap.org">OpenStreetMap</a> contributors';
     var osmTiles = L.tileLayer(osmUrl, {attribution: osmAttrib});
@@ -51,11 +51,13 @@ function addWorldGeoJson() {
     $.get("/worldjson", function(data) {
         _.each(data,  function(requests, status) {
             layergroups[status] = L.featureGroup();
-            /*layergroups[status].on('layeradd', function() {
-                if (typeof bounds == 'undefined') bounds = layergroups[status].getBounds();
-                bounds.extend(layergroups[status].getBounds())
-                map.fitBounds(bounds);
-            });*/
+            layergroups[status].on('layeradd', function(ev) {
+                if (typeof bounds == 'undefined') {
+                    bounds = ev.layer.getBounds();
+                } else {
+                    bounds.extend(ev.layer.getBounds());
+                }
+            });
             _.each(requests, function(layer, id) {
                 var title = layer.title;
                 var glayer = L.geoJson(
@@ -87,6 +89,10 @@ function addWorldGeoJson() {
             map.addLayer(layergroups[status]);
             control.addOverlay(layergroups[status],status);
         });
-        map.fitBounds(bounds);
+        // extremely dirty hack to zoom map when all layers load
+        setTimeout(function() {
+            map.fitBounds(bounds);
+        }, 1000);
+
     });
 }
