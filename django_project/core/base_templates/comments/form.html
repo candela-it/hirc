@@ -8,7 +8,7 @@
   {{ form.reply_to }}
 
   <div class="field">{{ form.comment }}</div>
-  <div class="ui fluid blue labeled submit icon button" data-request-id="{{request.pk}}">
+  <div class="ui fluid blue labeled submit icon button" data-request-id="{{ form.object_pk.value }}">
     <i class="icon edit"></i> Add Reply
   </div>
 </form>
