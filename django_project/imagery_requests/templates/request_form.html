@@ -5,6 +5,13 @@
   <div class="column">
     <form  action="" method="post" enctype="multipart/form-data" id="new_request">{% csrf_token %}
         <div class="ui form segment">
+          {% if form.status %}
+          <div class="field">
+            <a class="small ui secondary button" href="{% url 'view_request' object.id %}">
+              <i class="block layout icon"></i> Detailed request view
+              </a>
+          </div>
+          {% endif %}
           <div class="field">
             {{form.title.label_tag}}
             <div class="ui left labeled icon input">
@@ -15,6 +22,7 @@
                 </div>
             </div>
           </div>
+          {% if form.status %}
           <div class="field">
             <label>Status:</label>
             {% for radio in form.status %}
@@ -24,6 +32,7 @@
                 </div><br />
             {% endfor %}
           </div>
+          {% endif %}
           <div class="field">
             {{form.description.label_tag}}
             <div class="ui left labeled icon input">
