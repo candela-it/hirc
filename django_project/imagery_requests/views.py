@@ -2,6 +2,8 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.views.generic import ListView, UpdateView, DetailView, CreateView
+from django.views.generic.detail import BaseDetailView
+from django import http
 
 from .forms import ImageryRequestForm, ImageryRequestEditForm
 from .models import ImageryRequest
@@ -36,16 +38,24 @@ class ViewRequest(DetailView):
     model = ImageryRequest
     template_name = 'request_view.html'
 
-    def get_context_data(self, **kwargs):
-        """
-        Insert the single object into the context dict.
-        """
-        context = super(ViewRequest, self).get_context_data(**kwargs)
-        from django_comments_xtd.models import XtdComment
-        comment_list = XtdComment.objects.all()
-        for comment in comment_list:
-            # print comment.level
-            pass
 
-        # import pdb; pdb.set_trace()
-        return context
+class DownloadRequest(BaseDetailView):
+    model = ImageryRequest
+
+    def render_to_response(self, context):
+        request = context['object']
+
+        return self.json_response(
+            content=request.area_of_interest.geojson,
+            filename=request.title
+        )
+
+    def json_response(self, content, filename, **httpresponse_kwargs):
+        response = http.HttpResponse(
+            content, content_type='application/json', **httpresponse_kwargs
+        )
+
+        response['Content-Disposition'] = '{}; filename="{}.geojson"'.format(
+            'attachment', filename)
+
+        return response

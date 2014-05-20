@@ -4,7 +4,8 @@ from .views import (
     AddRequest,
     EditRequest,
     ViewRequest,
-    ListRequests
+    ListRequests,
+    DownloadRequest
 )
 
 urlpatterns = patterns(
@@ -21,4 +22,6 @@ urlpatterns = patterns(
         ViewRequest.as_view(),
         name='view_request'
     ),
+    url(r'^requests/download/(?P<pk>\d+)/$', DownloadRequest.as_view(),
+        name='download_request')
 )
