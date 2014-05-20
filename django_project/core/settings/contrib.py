@@ -18,6 +18,8 @@ PIPELINE_TEMPLATE_FUNC = '_.template'
 # enable cached storage - requires uglify.js (node.js)
 STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
 
+PIPELINE_DISABLE_WRAPPER = True
+
 
 #Emails are disabled.
 COMMENTS_APP = 'django_comments_xtd'
