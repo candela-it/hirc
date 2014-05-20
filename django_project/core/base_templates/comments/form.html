@@ -9,10 +9,8 @@
   {{ form.reply_to }}
 
   <div style="display:none;">{{ form.honeypot }}</div>
-  <div class="field">{{ form.email }}</div>
   <div class="field">{{ form.comment }}</div>
   <p class="submit">
     <input type="submit" name="post" class="submit-post ui blue submit button" value="Post" />
-    <input type="hidden" name="next" value="{% url 'view_request' request.id %}" />
   </p>
 </form>
