@@ -6,7 +6,7 @@ from django.views.generic.base import TemplateView, View
 from django.views.generic import DetailView
 from django.contrib.auth import logout as auth_logout
 
-from braces.views import JSONResponseMixin
+from braces.views import JSONResponseMixin, LoginRequiredMixin
 
 from imagery_requests.models import ImageryRequest, RequestStatus
 
@@ -15,7 +15,10 @@ class Home(TemplateView):
     template_name = 'index.html'
 
 
-class RefreshComments(DetailView):
+class RefreshComments(LoginRequiredMixin, DetailView):
+
+    raise_exception = True
+
     context_object_name = 'request'
     model = ImageryRequest
     template_name = 'request_comments.html'
@@ -27,7 +30,10 @@ class LogoutUser(View):
         return HttpResponseRedirect('/')
 
 
-class WorldGeoJson(JSONResponseMixin, View):
+class WorldGeoJson(LoginRequiredMixin, JSONResponseMixin, View):
+
+    raise_exception = True
+
     def get(self, request, *args, **kwargs):
         result = {}
         statuses = RequestStatus.objects.all()

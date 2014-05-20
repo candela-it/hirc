@@ -29,6 +29,7 @@ AUTH_USER_MODEL = 'imagery_requests.CustomUser'
 
 # redirect logged in user to the home page
 LOGIN_REDIRECT_URL = '/'
+LOGIN_URL = '/login/openstreetmap'
 
 # Set debug to false for production
 DEBUG = TEMPLATE_DEBUG = False

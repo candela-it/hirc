@@ -2,17 +2,19 @@ import logging
 logger = logging.getLogger(__name__)
 
 from django.http import HttpResponse
+from django.views.generic.edit import BaseUpdateView
+
+from braces.views import LoginRequiredMixin
 
 from .models import Answer
 from .forms import AnswerForm
 
 
-from django.views.generic.edit import BaseUpdateView
-
-
-class UpdateAnswer(BaseUpdateView):
+class UpdateAnswer(LoginRequiredMixin, BaseUpdateView):
     form_class = AnswerForm
     model = Answer
+
+    raise_exception = True
 
     def get_object(self, queryset=None):
         if queryset is None:
