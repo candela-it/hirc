@@ -38,7 +38,9 @@
     </div>
     <div class="one column row">
         <div class="column">
+        <div class="ui piled blue segment comments_block">
             {% include "request_comments.html" %}
+        </div>
         </div>
     </div>
 </div>
@@ -87,7 +89,7 @@
                         fl_message.transition('fade out', {
                             'complete': function() {fl_message.remove();}
                         });
-                }, 5000)
+                }, 5000);
             });
         });
 
@@ -98,5 +100,28 @@
             }
         });
 
+        // submit and refresh comments
+        $('.ui.comments_block').on('click', '.ui.reply .submit.button', function(){
+            var self = this;
+            var form = $(this).parent()
+            $.ajax(form.attr('action'), {
+                data: form.serialize(),
+                method: form.attr('method')
+            }).done(function(data) {
+                var url = '/refreshcomments/'+self.dataset.requestId;
+                $.ajax(url).done(function(data) {
+                    $('.ui.comments_block').html(data);
+                })
+            }).fail(function () {
+                //flash message
+                var fl_message = $('<div class="ui error message flash"><i class="close icon"></i><div class="header">Error adding a new reply</div><p></p></div>');
+                $('.flash_messages').append(fl_message);
+                fl_message.transition('bounce');
+                setTimeout(function() {
+                        fl_message.transition('fade out', {
+                            'complete': function() {fl_message.remove();}
+                        });
+                }, 5000)});
+        });
     </script>
 {% endblock %}

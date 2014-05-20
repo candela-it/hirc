@@ -3,7 +3,6 @@
 {% load humanize %}
 
 {% if comment_list %}
-<div class="ui piled blue segment">
 
 	{% for comment in comment_list|annotate_comment_tree %}
 
@@ -36,5 +35,4 @@
 	{# close comments, if needed #}
 	{% for close in comment.close %}</div></div>{% endfor %}
 	{% endfor %}
-</div>
 {% endif %}
