@@ -2,12 +2,15 @@
 {% load annotate_comment_tree %}
 {% load humanize %}
 
-{% if comment_list %}
+{% for comment in comment_list|annotate_comment_tree %}
 
-	{% for comment in comment_list|annotate_comment_tree %}
-
-	{# we are back to the 'parent' thread #}
-	{% if not comment.open and not comment.close %}</div>{% endif %}
+	{# if the comment is the same level close last comment and it's not open #}
+	{% ifchanged comment.level %}
+		{% if not comment.open %}</div>{% endif %}
+	{% else %}
+	{# if not close #}
+	</div>
+	{% endifchanged %}
 
 	{% if forloop.first %}
 		{% if comment.open %}<div class="ui minimal comments">{% endif %}
@@ -28,11 +31,10 @@
 					{{ comment.comment}}
 				</div>
 				<div class="actions">
-					<a class="delete" href="{% url 'delete_own_comment' comment.id %}">Delete</a>
 					<a class="reply" data-comment-id="{{ comment.id }}">Reply</a>
 				</div>
 			</div>
+
 	{# close comments, if needed #}
 	{% for close in comment.close %}</div></div>{% endfor %}
-	{% endfor %}
-{% endif %}
+{% endfor %}

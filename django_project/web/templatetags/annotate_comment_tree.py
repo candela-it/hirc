@@ -18,13 +18,14 @@ def annotate_comment_tree(comments):
 
     # first item starts a new thread
     current.open = True
+    current.close = []
 
     for next_c in it_comments:
+        next_c.open = False
         # if the level of the next comment is higher then current
         # open a new thread
         if next_c.level > current.level:
             next_c.open = True
-
         # in any other case, calcualte how many comments we need to close
         else:
             current.close = range(current.level - next_c.level)
