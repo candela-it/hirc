@@ -4,6 +4,7 @@
 }
 
 .full-page-width {
+    margin-top: -65px;
     width: 100%;
 }
 
@@ -21,6 +22,8 @@ h2 {
 
 body {
     font-family: "Open Sans", "Helvetica Neue", "Helvetica", "Arial", sans-serif/*rtl:prepend:"Droid Arabic Kufi","Droid Sans", */;
+    margin: 0;
+    padding: 0;
 }
 
 .leaflet-control, .leaflet-draw-edit-edit {
@@ -112,4 +115,11 @@ body {
     width: 350px;
     right: 20px;
     top: 50px;
+ }
+
+ .launch {
+    position: relative;
+    top: 230px;
+    width: 60px;
+    z-index: 99999;
  }
