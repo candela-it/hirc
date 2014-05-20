@@ -8,6 +8,10 @@
                 <tr>
                     <td class="project-field">Title:</td>
                     <td class="project-value">{{ object.title }}</td>
+                    <td><a class="small ui secondary button" href="{% url 'edit_request' object.id %}">
+                        <i class="edit icon"></i> EDIT
+                        </a>
+                    </td>
                 </tr>
                 <tr>
                     <td class="project-field">Desciption:</td>
@@ -29,6 +33,11 @@
         </div>
         <div class="column">
             <div id="map" style="height: 300px;"></div>
+            <a href="{% url 'download_request' request.id %}">
+                <div id="download-button" class="small ui secondary button">
+                  <i class="download icon"></i> Download request geometry
+                </div>
+            </a>
         </div>
     </div>
     <div class="two column row">
