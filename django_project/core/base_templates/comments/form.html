@@ -1,0 +1,14 @@
+{% load comments %}
+
+<form action="{% comment_form_target %}" method="post" class="ui reply form">
+  {{ form.content_type }}
+  {{ form.object_pk }}
+  {{ form.timestamp }}
+  {{ form.security_hash }}
+  {{ form.reply_to }}
+
+  <div class="field">{{ form.comment }}</div>
+  <div class="ui fluid blue labeled submit icon button" data-request-id="{{ form.object_pk.value }}">
+    <i class="icon edit"></i> Add Reply
+  </div>
+</form>

@@ -47,7 +47,9 @@
     </div>
     <div class="one column row">
         <div class="column">
-            {% include "request_comments.html" %}
+            <div id="comments_block">
+                {% include "request_comments.html" %}
+            </div>
         </div>
     </div>
 </div>
@@ -96,7 +98,7 @@
                         fl_message.transition('fade out', {
                             'complete': function() {fl_message.remove();}
                         });
-                }, 5000)
+                }, 5000);
             });
         });
 
@@ -107,5 +109,68 @@
             }
         });
 
+        // submit and refresh comments (new_comment)
+        $('#comments_block').on('click', '.new_comment .ui.reply.form .submit.button', function(){
+            var self = this;
+            var form = $(this).parent()
+            $.ajax(form.attr('action'), {
+                data: form.serialize(),
+                method: form.attr('method')
+            }).done(function(data) {
+                var url = '/refreshcomments/'+self.dataset.requestId;
+                $.ajax(url).done(function(data) {
+                    $('#comments_block').html(data);
+                })
+            }).fail(function () {
+                //flash message
+                var fl_message = $('<div class="ui error message flash"><i class="close icon"></i><div class="header">Error adding a new reply</div><p></p></div>');
+                $('.flash_messages').append(fl_message);
+                fl_message.transition('bounce');
+                setTimeout(function() {
+                        fl_message.transition('fade out', {
+                            'complete': function() {fl_message.remove();}
+                        });
+                }, 5000)
+            });
+        });
+
+        // inline reply form, submit and refresh (new replay)
+        $('#comments_block').on('click', '.comment .content .actions .reply', function() {
+            var self = this;
+            var comment = $(self).parent().parent();
+
+            var url = '/comments/reply/' + this.dataset.commentId;
+
+            if (!comment.find('form').length) {
+                $.ajax(url).done(function (data) {
+                    comment.append(data);
+                });
+            }
+        });
+
+        $('#comments_block').on('click', '.new_reply .ui.reply .submit.button', function() {
+            var self = this;
+            var form = $(this).parent()
+            $.ajax(form.attr('action'), {
+                data: form.serialize(),
+                method: form.attr('method')
+            }).done(function(data) {
+                var url = '/refreshcomments/'+self.dataset.requestId;
+                $.ajax(url).done(function(data) {
+
+                    $('#comments_block').html(data);
+                })
+            }).fail(function () {
+                //flash message
+                var fl_message = $('<div class="ui error message flash"><i class="close icon"></i><div class="header">Error adding a new reply</div><p></p></div>');
+                $('.flash_messages').append(fl_message);
+                fl_message.transition('bounce');
+                setTimeout(function() {
+                        fl_message.transition('fade out', {
+                            'complete': function() {fl_message.remove();}
+                        });
+                }, 5000)
+            });
+        });
     </script>
 {% endblock %}

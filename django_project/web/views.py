@@ -6,7 +6,9 @@ from django.contrib.comments.views.moderation import perform_delete
 from django.contrib.comments.models import Comment
 from django.http import Http404, HttpResponseRedirect
 from django.views.generic.base import TemplateView, View
+from django.views.generic import DetailView
 from django.contrib.auth import logout as auth_logout
+
 from braces.views import JSONResponseMixin
 
 from imagery_requests.models import ImageryRequest, RequestStatus
@@ -25,6 +27,12 @@ def delete_own_comment(request, id):
         raise Http404
     perform_delete(request, comment)
     return HttpResponseRedirect(comment.content_object.get_absolute_url())
+
+
+class RefreshComments(DetailView):
+    context_object_name = 'request'
+    model = ImageryRequest
+    template_name = 'request_comments.html'
 
 
 class LogoutUser(View):

@@ -32,13 +32,35 @@ body {
 }
 
 
-.comment {
-	border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+/* semantic UI comments display fixes */
+.ui.comments .comment .comments {
+    margin-top: 0.5em;
+    padding-bottom: 0em;
+    padding-top: 0.5em;
 }
 
-.author {
+.ui.comments .comment .avatar {
+  display: block;
+  float: left;
+  width: 2em;
+}
+
+ /* If there is an avatar move content over */
+.ui.comments .comment > .avatar ~ .content {
+  padding-top: 0.25em;
+  margin-left: 1.75em;
+}
+
+.ui.comments .comment .avatar i.icon {
+  display: block;
+  margin: 0em auto;
+}
+
+.comment .content .author {
     color: #009FDA;
 }
+
+
 
 #download-button {
 	margin-top: 5px;
