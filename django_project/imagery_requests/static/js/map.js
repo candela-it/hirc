@@ -63,8 +63,8 @@ function addWorldGeoJson() {
 
     // color definitions for legend
     colors = {
-        'Processing': '#00FF00',
-        'Done': '#FF0000',
+        'Processing': '#FF0000',
+        'Done': '#00FF00',
         'Initiated': '#0000FF'
     }
 
