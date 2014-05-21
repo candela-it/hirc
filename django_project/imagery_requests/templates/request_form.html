@@ -87,6 +87,7 @@
       } else {
         var drawnItems = omnivore.wkt.parse(polygon);
       }
+      map.fitBounds(drawnItems.getBounds());
     } else {
       var drawnItems = new L.FeatureGroup();
     }
@@ -94,7 +95,6 @@
       map.fitBounds(drawnItems.getBounds());
     });
     map.addLayer(drawnItems);
-    map.fitBounds(drawnItems.getBounds());
     // Initialise the draw control and pass it the FeatureGroup of editable layers
     var drawControl = new L.Control.Draw({
       draw: {
@@ -138,7 +138,6 @@
 
     map.on('draw:edited', function (e) {
         var layers = e.layers;
-        console.log(layers);
         layers.eachLayer(function (layer) {
             $('#id_area_of_interest').val(JSON.stringify(layer.toGeoJSON()['geometry']));
         });
