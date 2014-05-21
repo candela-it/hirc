@@ -75,8 +75,26 @@
     ;
     initMap();
     // Initialise the FeatureGroup to store editable layers
-    var drawnItems = new L.FeatureGroup();
 
+
+    if ( $('#id_area_of_interest').val() != '') {
+      //drawnItems.clearLayers();
+      polygon = $('#id_area_of_interest').val();
+      // if polygon is in geojson 
+      if (polygon[0] == '{') {
+        geojsonFeature = jQuery.parseJSON(polygon);
+        var drawnItems = L.geoJson(geojsonFeature);
+      } else {
+        var drawnItems = omnivore.wkt.parse(polygon);
+      }
+    } else {
+      var drawnItems = new L.FeatureGroup();
+    }
+    drawnItems.on('layeradd', function() {
+      map.fitBounds(drawnItems.getBounds());
+    });
+    map.addLayer(drawnItems);
+    map.fitBounds(drawnItems.getBounds());
     // Initialise the draw control and pass it the FeatureGroup of editable layers
     var drawControl = new L.Control.Draw({
       draw: {
@@ -120,6 +138,7 @@
 
     map.on('draw:edited', function (e) {
         var layers = e.layers;
+        console.log(layers);
         layers.eachLayer(function (layer) {
             $('#id_area_of_interest').val(JSON.stringify(layer.toGeoJSON()['geometry']));
         });
@@ -131,21 +150,6 @@
             $('#id_area_of_interest').val('');
         });
     });
-    drawnItems.on('layeradd', function() {
-      map.fitBounds(drawnItems.getBounds());
-    });
-    if ( $('#id_area_of_interest').val() != '') {
-      drawnItems.clearLayers();
-      polygon = $('#id_area_of_interest').val();
-      // if polygon is in geojson 
-      if (polygon[0] == '{') {
-        geojsonFeature = jQuery.parseJSON(polygon);
-        L.geoJson(geojsonFeature).addTo(drawnItems);
-      } else {
-        drawnItems.addLayer(omnivore.wkt.parse(polygon));
-      }
-    }
-    map.addLayer(drawnItems);
 
     //map.fitBounds(drawnItems.getBounds());
 
