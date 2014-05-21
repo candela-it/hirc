@@ -1,4 +1,9 @@
 #map {
+    width: 100%;
+}
+
+
+.map_homepage {
     position: absolute;
     bottom: 0;
     left: 0;
