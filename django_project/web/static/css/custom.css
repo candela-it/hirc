@@ -4,7 +4,6 @@
 }
 
 .full-page-width {
-    margin-top: -65px;
     width: 100%;
 }
 
@@ -137,11 +136,4 @@ body {
     width: 350px;
     right: 20px;
     top: 50px;
- }
-
- .launch {
-    position: relative;
-    top: 230px;
-    width: 60px;
-    z-index: 99999;
  }

@@ -58,6 +58,7 @@
 
 {% block extra_js %}
     <script type="text/javascript">
+        $('#menu_imagery').addClass('active');
         initMap();
 
         var geojsonPolygon = jQuery.parseJSON('{{ object.area_of_interest.geojson|safe }}');
