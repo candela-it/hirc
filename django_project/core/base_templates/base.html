@@ -11,26 +11,22 @@
 </head>
 
 <body>
-<div class="ui thin sidebar inverted vertical labeled icon menu" id="menu">
-    <a class="orange item" href="/">
-        <i class="globe icon"></i>
-        Home
-    </a>
-    <a class="orange item" href="{% url 'list_requests' %}">
-        <i class="photo icon"></i>
-        Imagery requests
-    </a>
-    <a class="orange item" href="#">
-        <i class="help icon"></i>
-        About
-    </a>
-</div>
+
 <div class="ui secondary pointing menu">
     <div class="item">
         <h1>HOT Imagery requests coordination service</h1>
     </div>
 
     <div class="right menu">
+        <a class="item" href="/" id="menu_homepage">
+            <i class="globe icon"></i> Home
+        </a>
+        <a class="item" href="{% url 'list_requests' %}" id="menu_imagery">
+            <i class="photo icon"></i> Imagery requests
+        </a>
+        <a class="item" href="#" id="menu_about">
+            <i class="help icon"></i> About
+        </a>
         {% if user.is_authenticated %}
             <div class="item">
                 <i class="user icon"></i> {{ user.username }}
@@ -46,10 +42,6 @@
     </div>
 </div>
 <div class="full-page-width">
-    <div class="ui huge orange launch right attached button">
-      <i class="icon list layout"></i>
-      <span class="text" style="display: none;">Menu</span>
-    </div>
 {% block content %}
 
 {% endblock content %}
@@ -69,15 +61,6 @@ $('.flash_messages').on('click', '.message .close', function(evt) {
         'complete': function() {fl_message.remove();}
     });
 });
-$('.sidebar').sidebar('attach events', '.launch').sidebar({overlay: true });
-$('.launch').removeClass('disabled');
-$(".launch.button").mouseenter(function(){
-        $(this).stop().animate({width: '170px'}, 150,
-             function(){$(this).find('.text').show();});
-    }).mouseleave(function (event){
-        $(this).find('.text').hide();
-        $(this).stop().animate({width: '60px'}, 150);
-    });
 </script>
 </body>
 </html>
