@@ -12,14 +12,18 @@ function initMap() {
     var bingAttrib = '&copy; <a href="http://bing.com/maps">Bing Maps</a>';
     var bingTiles = new BingLayer(bingUrl, {subdomains: ['0', '1', '2', '3', '4'], attribution: bingAttrib});
 
+    var bingUrlDate = 'http://mvexel.dev.openstreetmap.org/bingimageanalyzer/tile.php?t={q}';
+    var bingTilesDate = new BingLayer(bingUrlDate, {subdomains: ['0', '1', '2', '3', '4'], attribution: bingAttrib});
+
     map.addLayer(bingTiles);
     $(document).ready(function(){
       var overlays = {
         'osm': osmTiles,
         'mapbox': mapboxTiles,
-        'bing': bingTiles,
+        'bing': bingTiles
       };
     control = L.control.layers(overlays).addTo(map);
+    control.addOverlay(bingTilesDate, 'Bing tile age');
     });
 }
 
