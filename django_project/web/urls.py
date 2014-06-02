@@ -4,13 +4,15 @@ from .views import (
     Home,
     LogoutUser,
     WorldGeoJson,
-    RefreshComments
+    RefreshComments,
+    AboutPage
 )
 
 urlpatterns = patterns(
     '',
     url(r'^$', Home.as_view(), name='homeview'),
     url(r'^worldjson$', WorldGeoJson.as_view(), name='worldjson'),
+    url(r'^about$', AboutPage.as_view(), name='about_page'),
 
     url(
         r'^refreshcomments/(?P<pk>\d+)$', RefreshComments.as_view(),

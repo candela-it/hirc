@@ -18,13 +18,17 @@
     </div>
 
     <div class="right menu">
+        <a class="item" href="#">
+            <iframe src="http://ghbtns.com/github-btn.html?user=candela-it&repo=hirc&type=fork"
+  allowtransparency="true" frameborder="0" scrolling="0" width="50" height="20"></iframe>
+        </a>
         <a class="item" href="/" id="menu_homepage">
             <i class="globe icon"></i> Home
         </a>
         <a class="item" href="{% url 'list_requests' %}" id="menu_imagery">
             <i class="photo icon"></i> Imagery requests
         </a>
-        <a class="item" href="#" id="menu_about">
+        <a class="item" href="{% url 'about_page' %}" id="menu_about">
             <i class="help icon"></i> About
         </a>
         {% if user.is_authenticated %}

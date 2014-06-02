@@ -15,6 +15,10 @@ class Home(TemplateView):
     template_name = 'index.html'
 
 
+class AboutPage(TemplateView):
+    template_name = 'about.html'
+
+
 class RefreshComments(LoginRequiredMixin, DetailView):
 
     raise_exception = True
