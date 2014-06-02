@@ -87,6 +87,13 @@ class ImageryRequest(TimeStampedModelMixin, models.Model):
                 questions[i].update({'answer': {'text': 'No answer'}})
         return questions
 
+    def as_geojson(self):
+        return {
+            'id': self.pk,
+            'polygon': self.area_of_interest.geojson,
+            'title': self.title,
+            'status': self.status.title
+        }
 
 # register model with reversion
 reversion.register(ImageryRequest)

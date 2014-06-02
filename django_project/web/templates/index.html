@@ -10,7 +10,9 @@
 {% block extra_js %}
     <script type="text/javascript">
         initMap();
-        addWorldGeoJson();
-        $('#menu_homepage').addClass('active');
+        $(document).ready(function(){
+            addWorldGeoJson();
+            $('#menu_homepage').addClass('active');
+        });
     </script>
 {% endblock extra_js %}

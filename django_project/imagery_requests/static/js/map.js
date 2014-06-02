@@ -82,65 +82,71 @@ function addWorldGeoJson() {
        $('#popup').css({'top':mouseY+'px', 'left': mouseX + 'px'});
     });
 
-    //
-    $.get("/worldjson", function(data) {
-        _.each(data,  function(requests, status) {
-            layergroups[status] = L.featureGroup();
-            layergroups[status].on('layeradd', function(ev) {
-                if (typeof ev.layer._layers != 'undefined') {
-                    var html = _.find(ev.layer._layers, function (x) { return x.popup })
-                    var center = ev.layer.getBounds().getCenter();
-                    var icon = L.MakiMarkers.icon({icon: "town", color: colors[status], size: "m"});
-                    layerMarkers[ev.layer._leaflet_id] = L.marker(center, {icon: icon})
-                    layerMarkers[ev.layer._leaflet_id].addTo(this);
-                    $(layerMarkers[ev.layer._leaflet_id]).on('click', function() {
-                        window.location = '/requests/' + html.popupid + '/';
-                    });
-                    $(layerMarkers[ev.layer._leaflet_id]).hover(
-                        function() {
-                            $('#popup').html(html.popup).show();
-                        },
-                        function() {
-                            $('#popup').hide();
-                        }
-                    );
-                }
-                smartLayer(ev.layer);
-            });
-            _.each(requests, function(layer, id) {
-                var title = layer.title;
-                var glayer = L.geoJson(
-                    jQuery.parseJSON(layer.polygon),
-                    {
-                        style: {
-                            'color': colors[status],
-                            'weight': '1'
-                        },
-                        onEachFeature: function (feature, layer) {
-                            var html = '<p class="popup_elem">'+title+'</p>'+'<p class="popup_elem">'+status+'</p>';
-                            layer.popup = html;
-                            layer.popupid = id;
-                            layerPopups[layer._leaflet_id] = html;
-                            layer.popup = html;
-                            $(layer).on('click', function() {
-                                window.location = '/requests/' + id + '/';
-                            });
-                            $(layer).hover(
-                                function() {
-                                    $('#popup').html(html).show();
-                                },
-                                function() {
-                                    $('#popup').hide();
-                                }
-                            );
-                        }
+    // initialize layerGroups
+    var layergroupdefinition = ['Initiated', 'Processing', 'Done'];
+    for (lg_id in layergroupdefinition) {
+        var layergroup = layergroupdefinition[lg_id];
+        layergroups[layergroup] = L.featureGroup();
+        info.update('<p class="legend-item"><span class="box_' + layergroup +'"></span> '+layergroup+'</p>');
+
+        map.addLayer(layergroups[layergroup]);
+        control.addOverlay(layergroups[layergroup],layergroup);
+
+        layergroups[layergroup].on('layeradd', function(ev) {
+            if (typeof ev.layer._layers != 'undefined') {
+                var html = _.find(ev.layer._layers, function (x) { return x.popup })
+                var center = ev.layer.getBounds().getCenter();
+                var icon = L.MakiMarkers.icon({icon: "town", color: colors[layergroup], size: "m"});
+                layerMarkers[ev.layer._leaflet_id] = L.marker(center, {icon: icon})
+                layerMarkers[ev.layer._leaflet_id].addTo(this);
+                $(layerMarkers[ev.layer._leaflet_id]).on('click', function() {
+                    window.location = '/requests/' + html.popupid + '/';
+                });
+                $(layerMarkers[ev.layer._leaflet_id]).hover(
+                    function() {
+                        $('#popup').html(html.popup).show();
+                    },
+                    function() {
+                        $('#popup').hide();
                     }
                 );
-                layergroups[status].addLayer(glayer);
-            });
-            info.update('<p class="legend-item"><span class="box_' + status +'"></span> '+status+'</p>')
-            map.addLayer(layergroups[status]);
-            control.addOverlay(layergroups[status],status);
+            }
+            smartLayer(ev.layer);
+        });
+    };
+
+    //
+    $.get("/worldjson", function(data) {
+        _.each(data,  function(request) {
+            var glayer = L.geoJson(
+                jQuery.parseJSON(request.polygon),
+                {
+                    style: {
+                        'color': colors[request.status],
+                        'weight': '1'
+                    },
+                    onEachFeature: function (feature, layer) {
+                        var html = '<p class="popup_elem">'+request.title+'</p>'+'<p class="popup_elem">'+request.status+'</p>';
+                        layer.popup = html;
+                        layer.popupid = request.id;
+                        layerPopups[layer._leaflet_id] = html;
+                        layer.popup = html;
+                        $(layer).on('click', function() {
+                            window.location = '/requests/' + request.id + '/';
+                        });
+                        $(layer).hover(
+                            function() {
+                                $('#popup').html(html).show();
+                            },
+                            function() {
+                                $('#popup').hide();
+                            }
+                        );
+                    }
+                }
+            );
+            // add this layer to the layergroup
+            layergroups[request.status].addLayer(glayer);
         });
         map.on('zoomend', function() {
             _.each(layergroups, function(layerg, status) {

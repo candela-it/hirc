@@ -8,7 +8,7 @@ from django.contrib.auth import logout as auth_logout
 
 from braces.views import JSONResponseMixin, LoginRequiredMixin
 
-from imagery_requests.models import ImageryRequest, RequestStatus
+from imagery_requests.models import ImageryRequest
 
 
 class Home(TemplateView):
@@ -39,16 +39,7 @@ class WorldGeoJson(LoginRequiredMixin, JSONResponseMixin, View):
     raise_exception = True
 
     def get(self, request, *args, **kwargs):
-        result = {}
-        statuses = RequestStatus.objects.all()
-        for status in statuses:
-            geometry = {}
-            requests = ImageryRequest.objects.filter(status=status)
-            for req in requests:
-                geometry[req.id] = {
-                    'id': req.id,
-                    'title': req.title,
-                    'polygon': req.area_of_interest.geojson
-                }
-            result[status.title] = geometry
-        return self.render_json_response(result)
+        requests = ImageryRequest.objects.all().select_related()
+        return self.render_json_response([
+            req.as_geojson() for req in requests
+        ])
