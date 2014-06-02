@@ -29,7 +29,7 @@ INSTALLED_APPS += (
 TEMPLATE_READABLE_VALUES = ("PROJECT_TITLE", )
 
 # project TITLE
-PROJECT_TITLE = 'H.O.T. Imagery Request Coordination service'
+PROJECT_TITLE = 'TEST H.O.T. Imagery Request Coordination service TEST'
 
 # custom user for the project
 AUTH_USER_MODEL = 'imagery_requests.CustomUser'
