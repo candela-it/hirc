@@ -1,9 +1,10 @@
 {% load compressed %}
+{% load django_settings %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>{% block title%} HOT Imagery requests coordination service {% endblock title%}</title>
+    <title>{% block title%} {% django_settings 'PROJECT_TITLE' %} {% endblock title%}</title>
     <meta http-equiv="content-type" content="text/html;charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -14,7 +15,7 @@
 
 <div class="ui secondary pointing menu">
     <div class="item">
-        <h1>HOT Imagery requests coordination service</h1>
+        <h1>{% django_settings 'PROJECT_TITLE' %} </h1>
     </div>
 
     <div class="right menu">

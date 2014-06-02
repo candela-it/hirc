@@ -24,6 +24,13 @@ INSTALLED_APPS += (
     'web'
 )
 
+
+# define settings which are readable from templates
+TEMPLATE_READABLE_VALUES = ("PROJECT_TITLE", )
+
+# project TITLE
+PROJECT_TITLE = 'H.O.T. Imagery Request Coordination service'
+
 # custom user for the project
 AUTH_USER_MODEL = 'imagery_requests.CustomUser'
 
