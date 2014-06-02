@@ -1,0 +1,24 @@
+{% extends "base.html"%}
+
+{% block content %}
+
+
+<div class="ui column page grid">
+  <div class="column">
+    <div class="ui segment justified">
+    <p>
+        Welcome to the H.O.T. Imagery Request Coordination service, a tool for tracking requests made by to aerial imagery providers by the Humanitarian OpenStreetMap Team. The tool lists requests, allows discussion and refinement, and collaboration on defining areas of interest.
+    </p>
+    <p>
+        The tool is under development. To view the source code, make contributions, or just report issues see the <a href="https://github.com/candela-it/hirc">github repo</a>.
+    </p>
+    </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+    <script type="text/javascript">
+        $('#menu_about').addClass('active');
+    </script>
+{% endblock extra_js %}
