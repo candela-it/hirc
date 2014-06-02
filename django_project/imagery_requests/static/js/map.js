@@ -82,39 +82,42 @@ function addWorldGeoJson() {
        $('#popup').css({'top':mouseY+'px', 'left': mouseX + 'px'});
     });
 
+    // initialize layerGroups
+    var layergroupdefinition = ['Initiated', 'Processing', 'Done'];
+    for (lg_id in layergroupdefinition) {
+        var layergroup = layergroupdefinition[lg_id];
+        layergroups[layergroup] = L.featureGroup();
+        info.update('<p class="legend-item"><span class="box_' + layergroup +'"></span> '+layergroup+'</p>');
+
+        map.addLayer(layergroups[layergroup]);
+        control.addOverlay(layergroups[layergroup],layergroup);
+
+        layergroups[layergroup].on('layeradd', function(ev) {
+            if (typeof ev.layer._layers != 'undefined') {
+                var html = _.find(ev.layer._layers, function (x) { return x.popup })
+                var center = ev.layer.getBounds().getCenter();
+                var icon = L.MakiMarkers.icon({icon: "town", color: colors[layergroup], size: "m"});
+                layerMarkers[ev.layer._leaflet_id] = L.marker(center, {icon: icon})
+                layerMarkers[ev.layer._leaflet_id].addTo(this);
+                $(layerMarkers[ev.layer._leaflet_id]).on('click', function() {
+                    window.location = '/requests/' + html.popupid + '/';
+                });
+                $(layerMarkers[ev.layer._leaflet_id]).hover(
+                    function() {
+                        $('#popup').html(html.popup).show();
+                    },
+                    function() {
+                        $('#popup').hide();
+                    }
+                );
+            }
+            smartLayer(ev.layer);
+        });
+    };
+
     //
     $.get("/worldjson", function(data) {
         _.each(data,  function(request) {
-            if (layergroups[request.status] === undefined) {
-                layergroups[request.status] = L.featureGroup();
-                info.update('<p class="legend-item"><span class="box_' + request.status +'"></span> '+request.status+'</p>');
-
-                map.addLayer(layergroups[request.status]);
-                control.addOverlay(layergroups[request.status],request.status);
-
-                layergroups[request.status].on('layeradd', function(ev) {
-                    if (typeof ev.layer._layers != 'undefined') {
-                        var html = _.find(ev.layer._layers, function (x) { return x.popup })
-                        var center = ev.layer.getBounds().getCenter();
-                        var icon = L.MakiMarkers.icon({icon: "town", color: colors[request.status], size: "m"});
-                        layerMarkers[ev.layer._leaflet_id] = L.marker(center, {icon: icon})
-                        layerMarkers[ev.layer._leaflet_id].addTo(this);
-                        $(layerMarkers[ev.layer._leaflet_id]).on('click', function() {
-                            window.location = '/requests/' + html.popupid + '/';
-                        });
-                        $(layerMarkers[ev.layer._leaflet_id]).hover(
-                            function() {
-                                $('#popup').html(html.popup).show();
-                            },
-                            function() {
-                                $('#popup').hide();
-                            }
-                        );
-                    }
-                    smartLayer(ev.layer);
-                });
-            };
-
             var glayer = L.geoJson(
                 jQuery.parseJSON(request.polygon),
                 {
