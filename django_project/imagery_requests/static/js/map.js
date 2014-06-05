@@ -36,14 +36,21 @@ function getLayerSizePx(layer) {
 }
 
 function smartLayer(layer) {
-    if (typeof layer._layers != 'undefined') {
-        var mapsize = map.getSize();
-        var minim = mapsize.x*0.03;
-        var dist = getLayerSizePx(layer);
-        if (dist > minim) {
-            layerMarkers[layer._leaflet_id].setOpacity(0);
-        } else {
-            layerMarkers[layer._leaflet_id].setOpacity(1);
+    var mapsize = map.getSize();
+    var minim = mapsize.x * 0.03;
+    var dist = getLayerSizePx(layer);
+    var tmp_layers = layer.getLayers();
+
+    // check layers in the layer group
+    for (iLayer in tmp_layers) {
+        // maker layer shuold not have an additional layer group as it's not subclassing L.FeatureGroup
+        if (typeof tmp_layers[iLayer]._layers === 'undefined') {
+            // set opacity of the marker
+            if (dist > minim) {
+                tmp_layers[iLayer].setOpacity(0);
+            } else {
+                tmp_layers[iLayer].setOpacity(1);
+            }
         }
     }
 }
@@ -88,36 +95,14 @@ function addWorldGeoJson() {
         var layergroup = layergroupdefinition[lg_id];
         layergroups[layergroup] = L.featureGroup();
         info.update('<p class="legend-item"><span class="box_' + layergroup +'"></span> '+layergroup+'</p>');
-
         map.addLayer(layergroups[layergroup]);
         control.addOverlay(layergroups[layergroup],layergroup);
-
-        layergroups[layergroup].on('layeradd', function(ev) {
-            if (typeof ev.layer._layers != 'undefined') {
-                var html = _.find(ev.layer._layers, function (x) { return x.popup })
-                var center = ev.layer.getBounds().getCenter();
-                var icon = L.MakiMarkers.icon({icon: "town", color: colors[layergroup], size: "m"});
-                layerMarkers[ev.layer._leaflet_id] = L.marker(center, {icon: icon})
-                layerMarkers[ev.layer._leaflet_id].addTo(this);
-                $(layerMarkers[ev.layer._leaflet_id]).on('click', function() {
-                    window.location = '/requests/' + html.popupid + '/';
-                });
-                $(layerMarkers[ev.layer._leaflet_id]).hover(
-                    function() {
-                        $('#popup').html(html.popup).show();
-                    },
-                    function() {
-                        $('#popup').hide();
-                    }
-                );
-            }
-            smartLayer(ev.layer);
-        });
     };
 
     //
     $.get("/worldjson", function(data) {
         _.each(data,  function(request) {
+            var glayer_group = L.featureGroup();
             var glayer = L.geoJson(
                 jQuery.parseJSON(request.polygon),
                 {
@@ -127,10 +112,27 @@ function addWorldGeoJson() {
                     },
                     onEachFeature: function (feature, layer) {
                         var html = '<p class="popup_elem">'+request.title+'</p>'+'<p class="popup_elem">'+request.status+'</p>';
-                        layer.popup = html;
-                        layer.popupid = request.id;
-                        layerPopups[layer._leaflet_id] = html;
-                        layer.popup = html;
+
+                        var center = layer.getBounds().getCenter();
+                        var icon = L.MakiMarkers.icon({icon: "town", color: colors[request.status], size: "m"});
+
+                        var l_marker = L.marker(center, {icon: icon})
+                        // add marker layer to the layer group
+                        l_marker.addTo(glayer_group);
+
+                        // setup markerLayer events
+                        $(l_marker).on('click', function() {
+                             window.location = '/requests/' + request.id + '/';
+                        });
+                        $(l_marker).hover(
+                            function() {
+                                $('#popup').html(html).show();
+                            },
+                            function() {
+                                $('#popup').hide();
+                            }
+                        );
+                        // setup geojson layer events
                         $(layer).on('click', function() {
                             window.location = '/requests/' + request.id + '/';
                         });
@@ -145,9 +147,16 @@ function addWorldGeoJson() {
                     }
                 }
             );
-            // add this layer to the layergroup
-            layergroups[request.status].addLayer(glayer);
+
+            // add geojson layer to the layer group
+            glayer.addTo(glayer_group);
+            smartLayer(glayer_group);
+
+            // add this layer group to the layergroup
+            layergroups[request.status].addLayer(glayer_group);
+
         });
+
         map.on('zoomend', function() {
             _.each(layergroups, function(layerg, status) {
                 layerg.eachLayer(function (layer) {
