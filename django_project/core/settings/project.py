@@ -24,6 +24,12 @@ INSTALLED_APPS += (
     'web'
 )
 
+# reversion depends on CustomUSer, so it needs to be placed after
+# 'imagery_requests' migration which creates CustomUser
+INSTALLED_APPS += (
+    'reversion',
+)
+
 
 # define settings which are readable from templates
 TEMPLATE_READABLE_VALUES = ("PROJECT_TITLE", )

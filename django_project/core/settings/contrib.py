@@ -5,7 +5,6 @@ INSTALLED_APPS += (
     # 'raven.contrib.django',  # enable Raven plugin
     'south',
     'pipeline',
-    'reversion',
     'django.contrib.humanize',
     'django.contrib.comments',
     'django_comments_xtd',
