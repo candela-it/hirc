@@ -3,17 +3,86 @@ logger = logging.getLogger(__name__)
 
 from django.contrib.gis.db import models
 from django.conf import settings
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import (
+    PermissionsMixin, AbstractBaseUser, BaseUserManager
+)
+from django.core import validators
 from django.core.urlresolvers import reverse
+from django.utils import timezone
 
 import reversion
 
 from core.model_utilities import TimeStampedModelMixin
 
 
-class CustomUser(AbstractUser):
+class CustomUserManager(BaseUserManager):
+    def _create_user(
+            self, username, email, password, is_staff, is_superuser,
+            **extra_fields):
+
+        now = timezone.now()
+        if not username:
+            raise ValueError('The given username must be set')
+        email = self.normalize_email(email)
+        user = self.model(
+            username=username, email=email, is_staff=is_staff, is_active=True,
+            is_superuser=is_superuser, last_login=now, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_user(self, username, email=None, password=None, **extra_fields):
+        return self._create_user(
+            username, email, password, False, False, **extra_fields
+        )
+
+    def create_superuser(self, username, email, password, **extra_fields):
+        return self._create_user(
+            username, email, password, True, True, **extra_fields
+        )
+
+
+class CustomUser(PermissionsMixin, AbstractBaseUser):
+    username = models.CharField(
+        max_length=30, unique=True,
+        help_text=(
+            'Required. 30 characters or fewer. Letters, digits and @/./+/-/_ '
+            'only.'
+        ),
+        validators=[
+            validators.RegexValidator(
+                r'^[\w.@+-]+$', 'Enter a valid username.', 'invalid'
+            )
+        ]
+    )
     phone = models.CharField(max_length=15)
     address = models.CharField(max_length=50)
+    email = models.EmailField(blank=True)
+
+    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+
+    objects = CustomUserManager()
+
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = []
+
+    def __unicode__(self):
+        return unicode(self.username)
+
+    def get_full_name(self):
+        return u'{} ({})'.format(self.username, self.email)
+
+    def get_short_name(self):
+        return unicode(self.username)
+
+    def has_perm(self, perm, obj=None):
+        # Simplest possible answer: Yes, always
+        return True
+
+    def has_module_perms(self, app_label):
+        # Simplest possible answer: Yes, always
+        return True
 
 
 class RequestStatus(TimeStampedModelMixin, models.Model):
