@@ -32,6 +32,7 @@ COMMENTS_XTD_FORM_CLASS = 'web.forms.CustomXtdCommentForm'
 # python social auth required settings
 AUTHENTICATION_BACKENDS = (
     'social.backends.openstreetmap.OpenStreetMapOAuth',
+    'django.contrib.auth.backends.ModelBackend',
 )
 
 SOCIAL_AUTH_OPENSTREETMAP_KEY = 'LBqrPd0Y3YE9RKkn4RUVc5sDDcoVjbYpart7qdsr'
