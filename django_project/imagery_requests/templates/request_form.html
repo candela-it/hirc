@@ -3,6 +3,11 @@
 {% block content %}
 <div class="ui one column page grid">
   <div class="column">
+    {% if form.errors %}
+    <div class="ui secondary inverted red segment">
+    We noticed some issues. Please correct errors below.
+    </div>
+    {% endif %}
     <form  action="" method="post" enctype="multipart/form-data" id="new_request">{% csrf_token %}
         <div class="ui form segment">
           {% if form.status %}
@@ -21,6 +26,13 @@
                     <i class="icon asterisk"></i>
                 </div>
             </div>
+            {% if form.title.errors %}
+              {% for error in form.title.errors %}
+              <div class="ui pointing red label">
+                {{ error }}
+              </div>
+              {% endfor %}
+            {% endif %}
           </div>
           {% if form.status %}
           <div class="field">
@@ -42,24 +54,43 @@
                 <i class="icon asterisk"></i>
               </div>
             </div>
+            {% if form.description.errors %}
+              {% for error in form.description.errors %}
+              <div class="ui pointing red label">
+                {{ error }}
+              </div>
+              {% endfor %}
+            {% endif %}
           </div>
           <div class="field">
             <label>Imagery request area of interest:</label>
             <div id="map" class="map" style="height: 450px"></div>
+            {% if form.area_of_interest.errors %}
+              {% for error in form.area_of_interest.errors %}
+              <div class="ui pointing red label">
+                {{ error }}
+              </div>
+              {% endfor %}
+            {% endif %}
           </div>
           {{ form.area_of_interest }}
+          <label>Question set:</label>
           {% for radio in form.question_set %}
             <div class="field">
-                <label>Question set:</label>
               <div class="ui radio checkbox">
                 {{ radio.tag }}
                 <label>{{ radio.choice_label }}</label>
               </div>
             </div>
           {% endfor %}
-          <div class="ui error message">
-            <div class="header">We noticed some issues</div>
-          </div>
+          {% if form.question_set.errors %}
+              {% for error in form.question_set.errors %}
+              <div class="ui pointing red label">
+                {{ error }}
+              </div>
+              {% endfor %}
+          <br><br>
+          {% endif %}
           <button class="ui right blue labeled icon button submit" type="submit"><i class="right arrow icon"></i> Submit</button>
         </div>
     </form>
@@ -80,7 +111,7 @@
     if ( $('#id_area_of_interest').val() != '') {
       //drawnItems.clearLayers();
       polygon = $('#id_area_of_interest').val();
-      // if polygon is in geojson 
+      // if polygon is in geojson
       if (polygon[0] == '{') {
         geojsonFeature = jQuery.parseJSON(polygon);
         var drawnItems = L.geoJson(geojsonFeature);
