@@ -39,16 +39,13 @@ class Migration(SchemaMigration):
         u'imagery_requests.customuser': {
             'Meta': {'object_name': 'CustomUser'},
             'address': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
-            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
             'groups': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Group']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'phone': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
             'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Permission']"}),
@@ -65,17 +62,17 @@ class Migration(SchemaMigration):
             'status': ('django.db.models.fields.related.ForeignKey', [], {'default': '1', 'to': u"orm['imagery_requests.RequestStatus']"}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '50'})
         },
+        u'imagery_requests.requestdate': {
+            'Meta': {'object_name': 'RequestDate'},
+            'date': ('django.db.models.fields.DateField', [], {}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'imagery_request': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['imagery_requests.ImageryRequest']"}),
+            'time': ('django.db.models.fields.TimeField', [], {'null': 'True', 'blank': 'True'})
+        },
         u'imagery_requests.requeststatus': {
             'Meta': {'object_name': 'RequestStatus'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '15'})
-        },
-        u'questions.answer': {
-            'Meta': {'object_name': 'Answer'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'imagery_request': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['imagery_requests.ImageryRequest']"}),
-            'question': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['questions.Question']"}),
-            'text': ('django.db.models.fields.TextField', [], {})
         },
         u'questions.question': {
             'Meta': {'object_name': 'Question'},
@@ -87,6 +84,13 @@ class Migration(SchemaMigration):
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'questions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['questions.Question']", 'symmetrical': 'False'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '30'})
+        },
+        u'questions.answer': {
+            'Meta': {'object_name': 'Answer'},
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'imagery_request': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['imagery_requests.ImageryRequest']"}),
+            'question': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['questions.Question']"}),
+            'text': ('django.db.models.fields.TextField', [], {})
         }
     }
 

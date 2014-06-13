@@ -15,14 +15,11 @@ class Migration(SchemaMigration):
             ('last_login', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
             ('is_superuser', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('username', self.gf('django.db.models.fields.CharField')(unique=True, max_length=30)),
-            ('first_name', self.gf('django.db.models.fields.CharField')(max_length=30, blank=True)),
-            ('last_name', self.gf('django.db.models.fields.CharField')(max_length=30, blank=True)),
+            ('phone', self.gf('django.db.models.fields.CharField')(max_length=15)),
+            ('address', self.gf('django.db.models.fields.CharField')(max_length=50)),
             ('email', self.gf('django.db.models.fields.EmailField')(max_length=75, blank=True)),
             ('is_staff', self.gf('django.db.models.fields.BooleanField')(default=False)),
             ('is_active', self.gf('django.db.models.fields.BooleanField')(default=True)),
-            ('date_joined', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime.now)),
-            ('phone', self.gf('django.db.models.fields.CharField')(max_length=15)),
-            ('address', self.gf('django.db.models.fields.CharField')(max_length=50)),
         ))
         db.send_create_signal(u'imagery_requests', ['CustomUser'])
 
@@ -60,7 +57,7 @@ class Migration(SchemaMigration):
         ))
         db.send_create_signal(u'imagery_requests', ['RequestDate'])
 
-
+        # Adding model 'QuestionSet'
         db.create_table(u'questions_questionset', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('title', self.gf('django.db.models.fields.CharField')(max_length=30)),
@@ -104,7 +101,6 @@ class Migration(SchemaMigration):
             ('imagery_request', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['imagery_requests.ImageryRequest'])),
         ))
         db.send_create_signal(u'questions', ['Answer'])
-
 
     def backwards(self, orm):
         # Deleting model 'CustomUser'
@@ -162,16 +158,13 @@ class Migration(SchemaMigration):
         u'imagery_requests.customuser': {
             'Meta': {'object_name': 'CustomUser'},
             'address': ('django.db.models.fields.CharField', [], {'max_length': '50'}),
-            'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
-            'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
             'groups': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Group']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'is_superuser': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
             'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
-            'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
             'phone': ('django.db.models.fields.CharField', [], {'max_length': '15'}),
             'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Permission']"}),
