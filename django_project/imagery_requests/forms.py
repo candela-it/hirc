@@ -62,6 +62,9 @@ class ImageryRequestEditForm(forms.ModelForm):
 
 
 class RequestDateForm(forms.ModelForm):
+    date = forms.DateField(
+        widget=forms.DateInput(format='%d/%m/%Y'),
+        input_formats=('%d/%m/%Y',))
 
     class Meta:
         model = RequestDate

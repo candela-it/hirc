@@ -36,7 +36,7 @@
                 <table class="ui small table segment" id="dates_table">
                     <thead>
                         <tr>
-                            <th>Date</th>
+                            <th>Date (DD/MM/YYYY)</th>
                             <th>Time</th>
                             <th>Action</th>
                         </tr>
@@ -44,7 +44,7 @@
                     <tbody>
                         {% for date in object.requestdate_set.all %}
                         <tr>
-                            <td>{{ date.date }}</td>
+                            <td>{{ date.date.day }}/{{ date.date.month }}/{{ date.date.year }}</td>
                             <td>{{ date.time }}</td>
                             <td>
                                 <i class="large edit icon" style="cursor:pointer;" date-obj="{{date.pk}}"></i>
@@ -214,6 +214,11 @@
             type: 'GET',
             }).done(function(response) {
                 $('#dates_table tbody').append(response);
+                $('#id_date').datepicker({
+                    changeMonth: true,
+                    changeYear: true,
+                    dateFormat: 'dd/mm/yy'
+                });
 
                 $('#add_date_btn').hide();
                 $('.remove').hide();
@@ -274,6 +279,11 @@
             url: "/requests/edit-date/"+edit_date_obj+"/"
         }).done(function(response) {
             $(self).closest('tr').replaceWith(response);
+            $('#id_date').datepicker({
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: 'dd/mm/yy'
+            });
 
             $('#add_date_btn').hide();
             $('.remove').hide();
