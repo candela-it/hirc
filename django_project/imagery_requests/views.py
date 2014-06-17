@@ -58,7 +58,10 @@ class AddRequestDate(LoginRequiredMixin, JSONResponseMixin, CreateView):
                 str(self.object.date.day) + '/' +
                 str(self.object.date.month) + '/' +
                 str(self.object.date.year),
-                'time': self.object.time,
+                'time':
+                str(self.object.time.hour) + ':' +
+                str(self.object.time.minute) + ':' +
+                str(self.object.time.second),
                 'pk': self.object.pk}
         return self.render_json_response(data)
 
@@ -82,7 +85,10 @@ class EditRequestDate(LoginRequiredMixin, JSONResponseMixin, UpdateView):
                 str(self.object.date.day) + '/' +
                 str(self.object.date.month) + '/' +
                 str(self.object.date.year),
-                'time': self.object.time,
+                'time':
+                str(self.object.time.hour) + ':' +
+                str(self.object.time.minute) + ':' +
+                str(self.object.time.second),
                 'pk': self.object.pk}
         return self.render_json_response(data)
 

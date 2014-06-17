@@ -37,7 +37,7 @@
                     <thead>
                         <tr>
                             <th>Date (DD/MM/YYYY)</th>
-                            <th>Time</th>
+                            <th>Time (HMS)</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -45,7 +45,7 @@
                         {% for date in object.requestdate_set.all %}
                         <tr>
                             <td>{{ date.date.day }}/{{ date.date.month }}/{{ date.date.year }}</td>
-                            <td>{{ date.time }}</td>
+                            <td>{{ date.time.hour }}:{{ date.time.minute }}:{{ date.time.second }}</td>
                             <td>
                                 <i class="large edit icon" style="cursor:pointer;" date-obj="{{date.pk}}"></i>
                                 <i class="large remove icon" style="cursor:pointer;" date-obj="{{date.pk}}"></i>
@@ -255,6 +255,12 @@
             $('#dates_form_tr').remove();
             $('#dates_form_tr_errors').remove();
             $('#dates_table tbody').append(response.responseText)
+
+            $('#id_date').datepicker({
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: 'dd/mm/yy'
+            });
         })
     });
 
@@ -318,6 +324,12 @@
         }).fail(function(response) {
             $('#dates_form_tr_errors').remove();
             $('#dates_form_tr').replaceWith(response.responseText)
+
+            $('#id_date').datepicker({
+                changeMonth: true,
+                changeYear: true,
+                dateFormat: 'dd/mm/yy'
+            });
         })
     });
 

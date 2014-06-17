@@ -1,6 +1,8 @@
 import logging
 logger = logging.getLogger(__name__)
 
+import datetime
+
 from django.contrib.gis.db import models
 from django.conf import settings
 from django.contrib.auth.models import (
@@ -95,7 +97,8 @@ class RequestStatus(TimeStampedModelMixin, models.Model):
 class RequestDate(TimeStampedModelMixin, models.Model):
     date = models.DateField(help_text='Date of the request')
     time = models.TimeField(
-        null=True, blank=True, help_text='Time of the request'
+        null=True, blank=True, help_text='Time of the request',
+        default=datetime.time(0, 00, 00)
     )
     imagery_request = models.ForeignKey('ImageryRequest')
 
