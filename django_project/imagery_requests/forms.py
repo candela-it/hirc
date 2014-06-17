@@ -3,7 +3,7 @@ logger = logging.getLogger(__name__)
 
 import django.forms as forms
 
-from .models import ImageryRequest
+from .models import ImageryRequest, RequestDate
 
 
 class ImageryRequestForm(forms.ModelForm):
@@ -59,3 +59,10 @@ class ImageryRequestEditForm(forms.ModelForm):
         # following line needed to refresh widget copy of choice list
         self.fields['question_set'].widget.choices = (
             self.fields['question_set'].choices)
+
+
+class RequestDateForm(forms.ModelForm):
+
+    class Meta:
+        model = RequestDate
+        fields = ['date', 'time']

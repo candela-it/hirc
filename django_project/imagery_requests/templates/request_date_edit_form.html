@@ -1,0 +1,16 @@
+<tr id="dates_form_tr">
+    <td>{{form.date}}</td>
+    <td>{{form.time}}</td>
+    <td>
+      <div id="save_date_change" class="mini ui button">Save</div>
+      <div id="cancel_date_change" class="mini ui button">Cancel</div>
+    </td>
+
+</tr>
+
+{% if form.errors %}
+<tr id="dates_form_tr_errors">
+  <td>{{form.date.errors}}</td>
+  <td>{{form.time.errors}}</td>
+</tr>
+{% endif %}
