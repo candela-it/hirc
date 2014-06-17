@@ -37,7 +37,7 @@
                     <thead>
                         <tr>
                             <th>Date (DD/MM/YYYY)</th>
-                            <th>Time (HMS)</th>
+                            <th>Time (H:M:S)</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -45,7 +45,11 @@
                         {% for date in object.requestdate_set.all %}
                         <tr>
                             <td>{{ date.date.day }}/{{ date.date.month }}/{{ date.date.year }}</td>
-                            <td>{{ date.time.hour }}:{{ date.time.minute }}:{{ date.time.second }}</td>
+                            <td>
+                            {% if date.time %}
+                                {{ date.time.hour }}:{{ date.time.minute }}:{{ date.time.second }}
+                            {% endif %}
+                            </td>
                             <td>
                                 <i class="large edit icon" style="cursor:pointer;" date-obj="{{date.pk}}"></i>
                                 <i class="large remove icon" style="cursor:pointer;" date-obj="{{date.pk}}"></i>

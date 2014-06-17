@@ -54,14 +54,19 @@ class AddRequestDate(LoginRequiredMixin, JSONResponseMixin, CreateView):
         imagery_request = ImageryRequest.objects.get(pk=self.kwargs.get('pk'))
         self.object.imagery_request = imagery_request
         self.object.save()
+
+        if self.object.time:
+            time = str(self.object.time.hour) + ':' + \
+                str(self.object.time.minute) + ':' + \
+                str(self.object.time.second)
+        else:
+            time = ''
+
         data = {'date':
                 str(self.object.date.day) + '/' +
                 str(self.object.date.month) + '/' +
                 str(self.object.date.year),
-                'time':
-                str(self.object.time.hour) + ':' +
-                str(self.object.time.minute) + ':' +
-                str(self.object.time.second),
+                'time': time,
                 'pk': self.object.pk}
         return self.render_json_response(data)
 
@@ -81,14 +86,19 @@ class EditRequestDate(LoginRequiredMixin, JSONResponseMixin, UpdateView):
 
     def form_valid(self, form):
         self.object = form.save()
+
+        if self.object.time:
+            time = str(self.object.time.hour) + ':' + \
+                str(self.object.time.minute) + ':' + \
+                str(self.object.time.second)
+        else:
+            time = ''
+
         data = {'date':
                 str(self.object.date.day) + '/' +
                 str(self.object.date.month) + '/' +
                 str(self.object.date.year),
-                'time':
-                str(self.object.time.hour) + ':' +
-                str(self.object.time.minute) + ':' +
-                str(self.object.time.second),
+                'time': time,
                 'pk': self.object.pk}
         return self.render_json_response(data)
 
