@@ -218,10 +218,8 @@
             type: 'GET',
             }).done(function(response) {
                 $('#dates_table tbody').append(response);
-                $('#id_date').datepicker({
-                    changeMonth: true,
-                    changeYear: true,
-                    dateFormat: 'dd/mm/yy'
+                $('#id_date').datepick({
+                    dateFormat: 'dd/mm/yyyy'
                 });
 
                 $('#add_date_btn').hide();
@@ -260,10 +258,8 @@
             $('#dates_form_tr_errors').remove();
             $('#dates_table tbody').append(response.responseText)
 
-            $('#id_date').datepicker({
-                changeMonth: true,
-                changeYear: true,
-                dateFormat: 'dd/mm/yy'
+            $('#id_date').datepick({
+                dateFormat: 'dd/mm/yyyy'
             });
         })
     });
@@ -289,10 +285,8 @@
             url: "/requests/edit-date/"+edit_date_obj+"/"
         }).done(function(response) {
             $(self).closest('tr').replaceWith(response);
-            $('#id_date').datepicker({
-                changeMonth: true,
-                changeYear: true,
-                dateFormat: 'dd/mm/yy'
+            $('#id_date').datepick({
+                dateFormat: 'dd/mm/yyyy',
             });
 
             $('#add_date_btn').hide();
@@ -329,10 +323,8 @@
             $('#dates_form_tr_errors').remove();
             $('#dates_form_tr').replaceWith(response.responseText)
 
-            $('#id_date').datepicker({
-                changeMonth: true,
-                changeYear: true,
-                dateFormat: 'dd/mm/yy'
+            $('#id_date').datepick({
+                dateFormat: 'dd/mm/yyyy',
             });
         })
     });

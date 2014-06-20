@@ -60,7 +60,8 @@ PIPELINE_JS = {
             'js/leaflet-omnivore.min.js',
             'js/tiles/Bing.js',
             'js/Leaflet.MakiMarkers.js',
-            'js/jquery-ui-1.10.4.custom.min.js',
+            'js/jquery.plugin.js',
+            'js/jquery.datepick.js',
             'js/map.js'
         ),
         'output_filename': 'js/contrib.js',
@@ -73,7 +74,7 @@ PIPELINE_CSS = {
             'css/semantic.min.css',
             'css/leaflet.css',
             'css/leaflet.draw.css',
-            'css/ui-lightness/jquery-ui-1.10.4.custom.min.css',
+            'css/jquery.datepick.css',
             'css/custom.css',
             # 'css/bootstrap.min.css',
             # 'css/bootstrap-responsive.min.css',
