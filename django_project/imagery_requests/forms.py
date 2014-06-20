@@ -3,11 +3,13 @@ logger = logging.getLogger(__name__)
 
 import django.forms as forms
 
-from .models import ImageryRequest
+from .models import ImageryRequest, RequestDate
 
 
 class ImageryRequestForm(forms.ModelForm):
-    area_of_interest = forms.CharField(widget=forms.Textarea({'hidden': ''}))
+    area_of_interest = forms.CharField(
+        widget=forms.Textarea({'hidden': ''}),
+        error_messages={'required': 'Please select area of interest.'})
 
     class Meta:
         model = ImageryRequest
@@ -26,6 +28,8 @@ class ImageryRequestForm(forms.ModelForm):
         # following line needed to refresh widget copy of choice list
         self.fields['question_set'].widget.choices = (
             self.fields['question_set'].choices)
+        self.fields['question_set'].error_messages = (
+            {'required': 'Please select a question set.'})
 
 
 class ImageryRequestEditForm(forms.ModelForm):
@@ -55,3 +59,13 @@ class ImageryRequestEditForm(forms.ModelForm):
         # following line needed to refresh widget copy of choice list
         self.fields['question_set'].widget.choices = (
             self.fields['question_set'].choices)
+
+
+class RequestDateForm(forms.ModelForm):
+    date = forms.DateField(
+        widget=forms.DateInput(format='%d/%m/%Y'),
+        input_formats=('%d/%m/%Y',))
+
+    class Meta:
+        model = RequestDate
+        fields = ['date', 'time']
