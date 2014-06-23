@@ -1,0 +1,28 @@
+<tr id="dates_form_tr">
+    <td class="{% if form.date.errors %}error{% endif %}">{{form.date}}</td>
+    <td class="{% if form.time.errors %}error{% endif %}">{{form.time}}</td>
+    <td>
+      <div id="save_date" class="mini ui button">Save</div>
+      <div id="cancel_date" class="mini ui button">Cancel</div>
+    </td>
+
+</tr>
+
+{% if form.errors %}
+<tr id="dates_form_tr_errors">
+  <td>
+  {% for error in form.date.errors %}
+    <div class="ui pointing red label">
+        {{ error }}
+    </div>
+  {% endfor %}
+  </td>
+  <td>
+  {% for error in form.time.errors %}
+    <div class="ui pointing red label">
+        {{ error }}
+    </div>
+  {% endfor %}
+  </td>
+</tr>
+{% endif %}

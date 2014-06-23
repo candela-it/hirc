@@ -29,7 +29,44 @@
                     <td class="project-field">Question set:</td>
                     <td class="project-value" colspan="2">{{ object.question_set }}</td>
                 </tr>
-            </table>
+            </table><br>
+
+            <h4 style="text-align:center">Request Dates</h4>
+            <form action="" method="post" id="date_form">{% csrf_token %}
+                <table class="ui small table segment" id="dates_table">
+                    <thead>
+                        <tr>
+                            <th>Date (DD/MM/YYYY)</th>
+                            <th>Time (H:M:S)</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for date in object.requestdate_set.all %}
+                        <tr>
+                            <td>{{ date.date.day }}/{{ date.date.month }}/{{ date.date.year }}</td>
+                            <td>
+                            {% if date.time %}
+                                {{ date.time.hour }}:{{ date.time.minute }}:{{ date.time.second }}
+                            {% endif %}
+                            </td>
+                            <td>
+                                <i class="large edit icon" style="cursor:pointer;" date-obj="{{date.pk}}"></i>
+                                <i class="large remove icon" style="cursor:pointer;" date-obj="{{date.pk}}"></i>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <th colspan="3">
+                                <div class="ui blue labeled icon mini button" id="add_date_btn">
+                                    <i class="calendar icon"></i> Add date</div>
+                            </th>
+                        </tr>
+                    </tfoot>
+                </table>
+            </form>
         </div>
         <div class="column">
             <div id="map" style="height: 300px;"></div>
@@ -173,5 +210,147 @@
                 }, 5000)
             });
         });
+
+    // load request date form
+    $('#add_date_btn').click(function() {
+        $.ajax({
+            url: "{% url 'add_request_date' object.id %}",
+            type: 'GET',
+            }).done(function(response) {
+                $('#dates_table tbody').append(response);
+                $('#id_date').datepick({
+                    dateFormat: 'dd/mm/yyyy'
+                });
+
+                $('#add_date_btn').hide();
+                $('.remove').hide();
+                $('.edit').hide();
+            }).fail(function() {
+
+            });
+    });
+
+    // on save_date button click submit form
+    $('#dates_table tbody').on('click','tr td #save_date', function(evt) {
+        var form = $('#date_form');
+
+        $.ajax('', {
+            data: form.serialize(),
+            method: 'POST',
+            url: "{% url 'add_request_date' object.id %}"
+        }).done(function(data) {
+            $('#dates_form_tr').remove();
+            $('#dates_form_tr_errors').remove();
+            $('#dates_table tbody').append(
+                '<tr>' +
+                    '<td>'+ data.date +'</td><td>'+ data.time +'</td>'+
+                    '<td>'+
+                        '<i class="large edit icon" style="cursor:pointer;" date-obj="'+data.pk+'"></i>'+
+                        '<i class="large remove icon" style="cursor:pointer;" date-obj="'+data.pk+'"></i>'+
+                    '</td>'+
+                '</tr>'
+            );
+            $('#add_date_btn').show();
+            $('.remove').show();
+            $('.edit').show();
+        }).fail(function(response) {
+            $('#dates_form_tr').remove();
+            $('#dates_form_tr_errors').remove();
+            $('#dates_table tbody').append(response.responseText)
+
+            $('#id_date').datepick({
+                dateFormat: 'dd/mm/yyyy'
+            });
+        })
+    });
+
+    // cancel adding request date
+    $('#dates_table tbody').on('click','tr td #cancel_date', function(evt) {
+        $('#dates_form_tr').remove();
+        $('#dates_form_tr_errors').remove();
+
+        $('#add_date_btn').show();
+        $('.remove').show();
+        $('.edit').show();
+    });
+
+    // load date edit form
+    $('#dates_table tbody').on('click', 'tr td .edit', function() {
+        edit_date_obj = $(this).attr('date-obj')
+        var self = this
+        tr_clone = $(self).closest('tr').clone() // clone tr for future use
+
+        $.ajax('', {
+            method: 'GET',
+            url: "/requests/edit-date/"+edit_date_obj+"/"
+        }).done(function(response) {
+            $(self).closest('tr').replaceWith(response);
+            $('#id_date').datepick({
+                dateFormat: 'dd/mm/yyyy',
+            });
+
+            $('#add_date_btn').hide();
+            $('.remove').hide();
+            $('.edit').hide();
+        }).fail(function(response) {
+        })
+    });
+
+    // on save_date_change button click submit form
+    $('#dates_table tbody').on('click','tr td #save_date_change', function(evt) {
+        var form = $('#date_form');
+
+        $.ajax('', {
+            data: form.serialize(),
+            method: 'POST',
+            url: "/requests/edit-date/"+edit_date_obj+"/"
+        }).done(function(data) {
+            $('#dates_form_tr_errors').remove();
+            $('#dates_form_tr').replaceWith(
+                '<tr>' +
+                    '<td>'+ data.date +'</td><td>'+ data.time +'</td>'+
+                    '<td>'+
+                        '<i class="large edit icon" style="cursor:pointer;" date-obj="'+data.pk+'"></i>'+
+                        '<i class="large remove icon" style="cursor:pointer;" date-obj="'+data.pk+'"></i>'+
+                    '</td>'+
+                '</tr>'
+            );
+
+            $('#add_date_btn').show();
+            $('.remove').show();
+            $('.edit').show();
+        }).fail(function(response) {
+            $('#dates_form_tr_errors').remove();
+            $('#dates_form_tr').replaceWith(response.responseText)
+
+            $('#id_date').datepick({
+                dateFormat: 'dd/mm/yyyy',
+            });
+        })
+    });
+
+    // cancel editing request date
+    $('#dates_table tbody').on('click','tr td #cancel_date_change', function(evt) {
+        $('#dates_form_tr_errors').remove();
+        $('#dates_form_tr').replaceWith(tr_clone);
+
+        $('#add_date_btn').show();
+        $('.remove').show();
+        $('.edit').show();
+    });
+
+    // remove date
+    $('#dates_table tbody').on('click', 'tr td .remove', function() {
+        var date_obj = $(this).attr('date-obj')
+        var self = this
+
+        $.ajax('', {
+            method: 'POST',
+            url: "/requests/delete-date/"+date_obj+"/"
+        }).done(function(response) {
+            $(self).closest('tr').remove();
+        }).fail(function(response) {
+        })
+    });
     </script>
 {% endblock %}
