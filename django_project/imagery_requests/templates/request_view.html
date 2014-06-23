@@ -4,7 +4,8 @@
 <div class="ui vertically divided grid">
     <div class="two column row">
         <div class="column">
-            <table>
+        <h4>Request information</h4>
+            <table class="ui small table segment">
                 <tr>
                     <td class="project-field">Title:</td>
                     <td class="project-value">{{ object.title }}</td>
@@ -29,30 +30,26 @@
                     <td class="project-field">Question set:</td>
                     <td class="project-value" colspan="2">{{ object.question_set }}</td>
                 </tr>
-            </table><br>
+            </table>
 
-            <h4 style="text-align:center">Request Dates</h4>
+            <h4>Request Dates</h4>
             <form action="" method="post" id="date_form">{% csrf_token %}
                 <table class="ui small table segment" id="dates_table">
                     <thead>
                         <tr>
                             <th>Date (DD/MM/YYYY)</th>
-                            <th>Time (H:M:S)</th>
+                            <th>Time (H:M)</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for date in object.requestdate_set.all %}
+                        {% for req_date in object.requestdate_set.all %}
                         <tr>
-                            <td>{{ date.date.day }}/{{ date.date.month }}/{{ date.date.year }}</td>
+                            <td>{{ req_date.date|date:"d/m/Y" }}</td>
+                            <td>{{ req_date.time|default:None|time:"H:i" }}</td>
                             <td>
-                            {% if date.time %}
-                                {{ date.time.hour }}:{{ date.time.minute }}:{{ date.time.second }}
-                            {% endif %}
-                            </td>
-                            <td>
-                                <i class="large edit icon" style="cursor:pointer;" date-obj="{{date.pk}}"></i>
-                                <i class="large remove icon" style="cursor:pointer;" date-obj="{{date.pk}}"></i>
+                                <i class="edit circular icon teal inverted" style="cursor:pointer;" date-obj="{{req_date.pk}}"></i>
+                                <i class="remove square icon red inverted" style="cursor:pointer;" date-obj="{{req_date.pk}}"></i>
                             </td>
                         </tr>
                         {% endfor %}
@@ -216,18 +213,19 @@
         $.ajax({
             url: "{% url 'add_request_date' object.id %}",
             type: 'GET',
-            }).done(function(response) {
-                $('#dates_table tbody').append(response);
-                $('#id_date').datepick({
-                    dateFormat: 'dd/mm/yyyy'
-                });
+        }).done(function(response) {
+            $('#dates_table tbody').append(response);
 
-                $('#add_date_btn').hide();
-                $('.remove').hide();
-                $('.edit').hide();
-            }).fail(function() {
-
+            $('#id_date').datepick({
+                dateFormat: 'dd/mm/yyyy'
             });
+
+            $('#add_date_btn').hide();
+            // $('.remove').hide();
+            // $('.edit').hide();
+        }).fail(function(response) {
+            console.log(response)
+        });
     });
 
     // on save_date button click submit form
@@ -239,20 +237,15 @@
             method: 'POST',
             url: "{% url 'add_request_date' object.id %}"
         }).done(function(data) {
+            // clean inlined form
             $('#dates_form_tr').remove();
             $('#dates_form_tr_errors').remove();
-            $('#dates_table tbody').append(
-                '<tr>' +
-                    '<td>'+ data.date +'</td><td>'+ data.time +'</td>'+
-                    '<td>'+
-                        '<i class="large edit icon" style="cursor:pointer;" date-obj="'+data.pk+'"></i>'+
-                        '<i class="large remove icon" style="cursor:pointer;" date-obj="'+data.pk+'"></i>'+
-                    '</td>'+
-                '</tr>'
-            );
+
+            // add date to the table
+            $('#dates_table tbody').append(JST.request_date({'data':data}));
             $('#add_date_btn').show();
-            $('.remove').show();
-            $('.edit').show();
+            $('#dates_table tbody .remove').show();
+            $('#dates_table tbody .edit').show();
         }).fail(function(response) {
             $('#dates_form_tr').remove();
             $('#dates_form_tr_errors').remove();
@@ -270,17 +263,17 @@
         $('#dates_form_tr_errors').remove();
 
         $('#add_date_btn').show();
-        $('.remove').show();
-        $('.edit').show();
+        $('#dates_table tbody .remove').show();
+        $('#dates_table tbody .edit').show();
     });
 
     // load date edit form
     $('#dates_table tbody').on('click', 'tr td .edit', function() {
-        edit_date_obj = $(this).attr('date-obj')
-        var self = this
+        edit_date_obj = $(this).attr('date-obj');
+        var self = this;
         tr_clone = $(self).closest('tr').clone() // clone tr for future use
 
-        $.ajax('', {
+        $.ajax({
             method: 'GET',
             url: "/requests/edit-date/"+edit_date_obj+"/"
         }).done(function(response) {
@@ -290,8 +283,8 @@
             });
 
             $('#add_date_btn').hide();
-            $('.remove').hide();
-            $('.edit').hide();
+            $('#dates_table tbody .remove').hide();
+            $('#dates_table tbody .edit').hide();
         }).fail(function(response) {
         })
     });
@@ -300,25 +293,19 @@
     $('#dates_table tbody').on('click','tr td #save_date_change', function(evt) {
         var form = $('#date_form');
 
-        $.ajax('', {
+        $.ajax({
             data: form.serialize(),
             method: 'POST',
             url: "/requests/edit-date/"+edit_date_obj+"/"
         }).done(function(data) {
             $('#dates_form_tr_errors').remove();
             $('#dates_form_tr').replaceWith(
-                '<tr>' +
-                    '<td>'+ data.date +'</td><td>'+ data.time +'</td>'+
-                    '<td>'+
-                        '<i class="large edit icon" style="cursor:pointer;" date-obj="'+data.pk+'"></i>'+
-                        '<i class="large remove icon" style="cursor:pointer;" date-obj="'+data.pk+'"></i>'+
-                    '</td>'+
-                '</tr>'
+                JST.request_date({'data':data})
             );
 
             $('#add_date_btn').show();
-            $('.remove').show();
-            $('.edit').show();
+            $('#dates_table tbody .remove').show();
+            $('#dates_table tbody .edit').show();
         }).fail(function(response) {
             $('#dates_form_tr_errors').remove();
             $('#dates_form_tr').replaceWith(response.responseText)
@@ -335,8 +322,8 @@
         $('#dates_form_tr').replaceWith(tr_clone);
 
         $('#add_date_btn').show();
-        $('.remove').show();
-        $('.edit').show();
+        $('#dates_table tbody .remove').show();
+        $('#dates_table tbody .edit').show();
     });
 
     // remove date
