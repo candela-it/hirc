@@ -7,7 +7,9 @@ from .models import ImageryRequest
 
 
 class ImageryRequestForm(forms.ModelForm):
-    area_of_interest = forms.CharField(widget=forms.Textarea({'hidden': ''}))
+    area_of_interest = forms.CharField(
+        widget=forms.Textarea({'hidden': ''}),
+        error_messages={'required': 'Please select area of interest.'})
 
     class Meta:
         model = ImageryRequest
@@ -26,6 +28,8 @@ class ImageryRequestForm(forms.ModelForm):
         # following line needed to refresh widget copy of choice list
         self.fields['question_set'].widget.choices = (
             self.fields['question_set'].choices)
+        self.fields['question_set'].error_messages = (
+            {'required': 'Please select a question set.'})
 
 
 class ImageryRequestEditForm(forms.ModelForm):
