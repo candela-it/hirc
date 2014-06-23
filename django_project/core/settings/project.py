@@ -54,6 +54,7 @@ PIPELINE_JS = {
             'js/jquery-1.11.1.min.js',
             'js/csrf-ajax.js',
             'js/underscore-min.js',
+            'js/templates/*.jst',
             'js/semantic.min.js',
             'js/leaflet.js',
             'js/leaflet.draw.js',
