@@ -1,6 +1,8 @@
 import logging
 logger = logging.getLogger(__name__)
 
+import json
+
 import django.forms as forms
 
 from .models import ImageryRequest, RequestDate
@@ -75,3 +77,33 @@ class RequestDateForm(forms.ModelForm):
     class Meta:
         model = RequestDate
         fields = ['date', 'time']
+
+
+class GeoJsonForm(forms.Form):
+    geojson = forms.FileField(error_messages={'required': 'No file selected.'})
+
+    def clean_geojson(self):
+        try:
+            data = json.load(self.cleaned_data['geojson'])
+        except ValueError:
+            raise forms.ValidationError('Data was not JSON serializeable.')
+
+        if not isinstance(data, dict):
+            raise forms.ValidationError('Data was not a JSON object.')
+
+        if 'geometry' not in data:
+            message = 'The "geometry" member is required and was not found.'
+            raise forms.ValidationError(message)
+
+        if 'type' not in data['geometry']:
+            message = 'The "type" member is required and was not found.'
+            raise forms.ValidationError(message)
+
+        if 'coordinates' not in data['geometry']:
+            message = 'The "coordinates" member is required and was not found.'
+            raise forms.ValidationError(message)
+
+        if data['geometry']['type'] != 'Polygon':
+            raise forms.ValidationError('Geometry type has to be "Polygon".')
+
+        return data

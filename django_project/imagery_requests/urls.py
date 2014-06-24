@@ -9,6 +9,7 @@ from .views import (
     ViewRequest,
     ListRequests,
     DownloadRequest,
+    ImportGeoJson
 )
 
 urlpatterns = patterns(
@@ -41,5 +42,7 @@ urlpatterns = patterns(
         name='view_request'
     ),
     url(r'^requests/download/(?P<pk>\d+)/$', DownloadRequest.as_view(),
-        name='download_request')
+        name='download_request'),
+    url(r'^requests/import-geojson/$', ImportGeoJson.as_view(),
+        name='import_geojson')
 )
