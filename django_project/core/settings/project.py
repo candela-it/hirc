@@ -63,6 +63,7 @@ PIPELINE_JS = {
             'js/Leaflet.MakiMarkers.js',
             'js/jquery.plugin.js',
             'js/jquery.datepick.js',
+            'js/jquery.form.min.js',
             'js/map.js'
         ),
         'output_filename': 'js/contrib.js',
