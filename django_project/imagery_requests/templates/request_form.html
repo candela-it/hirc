@@ -64,6 +64,12 @@
           </div>
           <div class="field">
             <label>Imagery request area of interest:</label>
+            <div id="area_import_div">
+              <label style="font-size:12px;font-style:italic;">
+                Draw polygon on map or
+                <a href="">import geojson</a>
+              </label>
+            </div>
             <div id="map" class="map" style="height: 450px"></div>
             {% if form.area_of_interest.errors %}
               {% for error in form.area_of_interest.errors %}
@@ -158,7 +164,6 @@
         drawnItems.clearLayers();
 
         drawnItems.addLayer(layer);
-
         // dump to textarea
         $('#id_area_of_interest').val(JSON.stringify(layer.toGeoJSON()['geometry']));
     });
@@ -181,7 +186,56 @@
         });
     });
 
-    //map.fitBounds(drawnItems.getBounds());
+    // show form for geojson import
+    $('#area_import_div').on('click', 'a', function(e) {
+        e.preventDefault();
+        var form = $('#date_form');
+
+        $.ajax({
+            method: 'GET',
+            url: "/requests/import-geojson/",
+        }).done(function(data) {
+            $('#area_import_div').html(data)
+        })
+
+    });
+
+    // submit imported geojson
+    $('#area_import_div').on('click', '#submit_geojson', function() {
+
+        $('#area_import_div form').ajaxSubmit({
+            type: 'POST',
+            url: "/requests/import-geojson/",
+            contentType: "application/json; charset=utf-8",
+            success: function(response) {
+                $('#area_import_div').html(
+                  '<label style="font-size:12px;font-style:italic;">' +
+                  'Draw polygon on map or <a href="">import geojson</a>');
+
+                var geojsonFeature = jQuery.parseJSON(response);
+                var layer = L.geoJson(geojsonFeature);
+
+                // delete previous layer
+                drawnItems.clearLayers();
+
+                drawnItems.addLayer(layer);
+
+                // dump to textarea
+                $('#id_area_of_interest').val(response);
+            },
+            error: function(response) {
+                $('#area_import_div').html(response.responseText)
+            }
+        })
+    });
+
+    // cancel geojson import
+    $('#area_import_div').on('click', '#cancel_geojson', function() {
+        $('#area_import_div').html(
+          '<label style="font-size:12px;font-style:italic;">' +
+          'Draw polygon on map or <a href="">import geojson</a>');
+    });
+
 
   </script>
 {% endblock %}

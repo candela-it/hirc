@@ -1,0 +1,19 @@
+<form action="" method="post" enctype="multipart/form-data">{% csrf_token %}
+    <div class="field" style="margin:0px;">
+        {{ form.geojson }}
+
+        <div class="mini ui buttons" style="margin-bottom:5px;">
+          <div id="submit_geojson" class="ui positive button">Import</div>
+          <div class="or"></div>
+          <div id="cancel_geojson" class="ui button">Cancel</div>
+        </div>
+    </div>
+
+    {% if  form.geojson.errors %}
+        {% for error in form.geojson.errors %}
+            <div class="ui pointing red label">
+            {{ error }}
+            </div>
+        {% endfor %}
+    {% endif %}
+</form>

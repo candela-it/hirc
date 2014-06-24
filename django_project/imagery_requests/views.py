@@ -1,12 +1,15 @@
 import logging
 logger = logging.getLogger(__name__)
 
+import json
+
 from django.views.generic import (
     ListView,
     UpdateView,
     DetailView,
     CreateView,
-    DeleteView
+    DeleteView,
+    FormView
 )
 from django.views.generic.detail import BaseDetailView
 from django import http
@@ -16,7 +19,8 @@ from braces.views import LoginRequiredMixin, JSONResponseMixin
 from .forms import (
     ImageryRequestForm,
     ImageryRequestEditForm,
-    RequestDateForm
+    RequestDateForm,
+    GeoJsonForm
 )
 
 from .models import ImageryRequest, RequestDate
@@ -144,3 +148,22 @@ class DownloadRequest(LoginRequiredMixin, BaseDetailView):
             'attachment', filename)
 
         return response
+
+
+class ImportGeoJson(LoginRequiredMixin,
+                    JSONResponseMixin, FormView):
+    form_class = GeoJsonForm
+    template_name = 'geojson_form.html'
+
+    def form_valid(self, form):
+        # form.cleaned_data['geojson'] is data returned from clean_geojson
+        # function in GeoJsonForm (forms.py)
+        geojson_data = form.cleaned_data['geojson']
+        geometry = geojson_data['geometry']
+
+        return self.render_json_response(json.dumps(geometry))
+
+    def form_invalid(self, form):
+        myResponse = self.render_to_response(self.get_context_data(form=form))
+        myResponse.status_code = 404
+        return myResponse
