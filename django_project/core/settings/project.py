@@ -66,6 +66,15 @@ PIPELINE_JS = {
             'js/map.js'
         ),
         'output_filename': 'js/contrib.js',
+    },
+    'ember': {
+        'source_filenames': (
+            'js/handlebars-v1.3.0.js',
+            'ember.prod.js',
+            'ember-data.prod.js',
+            'ember-data-django-rest-adapter.prod.js',
+        ),
+        'output_filename': 'js/ember.js',
     }
 }
 
