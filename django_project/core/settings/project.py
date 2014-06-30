@@ -21,6 +21,7 @@ DATABASES = {
 INSTALLED_APPS += (
     'imagery_requests',
     'questions',
+    'providers',
     'web'
 )
 
@@ -30,6 +31,8 @@ INSTALLED_APPS += (
     'reversion',
 )
 
+# URI must be perfect, don't automagically append slash
+APPEND_SLASH = False
 
 # define settings which are readable from templates
 TEMPLATE_READABLE_VALUES = ("PROJECT_TITLE", )
@@ -42,7 +45,7 @@ AUTH_USER_MODEL = 'imagery_requests.CustomUser'
 
 # redirect logged in user to the home page
 LOGIN_REDIRECT_URL = '/'
-LOGIN_URL = '/login/openstreetmap'
+LOGIN_URL = '/login/openstreetmap/'
 
 # Set debug to false for production
 DEBUG = TEMPLATE_DEBUG = False
@@ -54,7 +57,7 @@ PIPELINE_JS = {
             'js/jquery-1.11.1.min.js',
             'js/csrf-ajax.js',
             'js/underscore-min.js',
-            'js/backbone-min.js',
+            'js/backbone.js',
             'js/templates/*.jst',
             'js/semantic.min.js',
             'js/leaflet.js',

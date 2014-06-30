@@ -29,7 +29,9 @@ class Provider(models.Model):
 class ProviderResponse(models.Model):
     imagery_request = models.ForeignKey('imagery_requests.ImageryRequest')
     status = models.ForeignKey('providers.ProviderStatus')
-    provider = models.ForeignKey('providers.Provider', related_name='responses')
+    provider = models.ForeignKey(
+        'providers.Provider', related_name='responses'
+    )
 
 # register model with reversion
 reversion.register(ProviderStatus)

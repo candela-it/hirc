@@ -145,3 +145,11 @@ body {
     right: 20px;
     top: 50px;
  }
+
+.provider-status i {
+   cursor: pointer;
+}
+
+.provider-status {
+   text-align:center !important;
+}
