@@ -2,6 +2,8 @@
 
 {% block content %}
 <div class="ui vertically divided grid">
+{# show provider reponse overview only to staff user#}
+{% if user.is_staff %}
 <div class="two column row">
     <div id="providerResponseView" class='column'>
         <h4>Provider information</h4>
@@ -22,6 +24,7 @@
     <div class='column'>
     </div>
 </div>
+{% endif %}
     <div class="two column row">
         <div class="column">
         <h4>Request information</h4>
@@ -395,7 +398,6 @@
 
         render: function() {
             $(this.el).html(JST.provider_response_item({'model': this.model}));
-            console.log('rendering',this.model);
             return this;
         },
 
@@ -492,7 +494,10 @@
         }
     });
 
+    {# show provider reponse overview only to staff user#}
+    {% if user.is_staff %}
     var providerResponseView = new ProviderResponseView({'imagery_request_id':{{ object.pk }}});
+    {% endif %}
     </script>
 
 {% endblock %}
