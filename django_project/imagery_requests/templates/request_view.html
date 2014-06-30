@@ -2,6 +2,26 @@
 
 {% block content %}
 <div class="ui vertically divided grid">
+<div class="two column row">
+    <div id="providerResponseView" class='column'>
+        <h4>Provider information</h4>
+        <table class="ui table segment compact">
+        <thead>
+        <tr><th>Provider</th>{% for status in statuses %}<th class="provider-status" data-status-id="{{status.pk}}"> {{ status.title }} </th>{% endfor %}
+        </thead>
+        <tbody>
+        {% for provider in providers %}
+            <tr data-provider-id="{{provider.pk}}">
+            <td> {{ provider.name }} </td>
+            {% for status in statuses %}<td data-status-id="{{status.pk}}" class="provider-status"><i class="small icon checkmark circular red inverted"></i></td>{% endfor %}
+            </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+    </div>
+    <div class='column'>
+    </div>
+</div>
     <div class="two column row">
         <div class="column">
         <h4>Request information</h4>
@@ -92,6 +112,7 @@
 
 {% block extra_js %}
     <script type="text/javascript">
+
         $('#menu_imagery').addClass('active');
         initMap();
 
@@ -339,5 +360,139 @@
         }).fail(function(response) {
         })
     });
+
+
+    var ProviderResponse = Backbone.Model.extend({
+        urlRoot: '/api/providerresponses/',
+
+        url: function() {
+            var base = _.result(this, 'urlRoot') || _.result(this.collection, 'url') || urlError();
+            if (this.isNew()) return base;
+
+            // add trailing slash to the URL
+            return base.replace(/([^\/])$/, '$1/') + encodeURIComponent(this.id) + '/';
+        }
+
+    });
+
+    var ProviderResponseList = Backbone.Collection.extend({
+        url: '/api/providerresponses/',
+
+        model: ProviderResponse
+    });
+
+    var ProviderResponseItemView = Backbone.View.extend({
+        tagName: 'span',
+
+        events: {
+            'click': '_handleClick'
+        },
+
+        initialize: function(options) {
+            // bind events
+            this.model.bind('change', this.render, this);
+        },
+
+        render: function() {
+            $(this.el).html(JST.provider_response_item({'model': this.model}));
+            console.log('rendering',this.model);
+            return this;
+        },
+
+        _handleClick : function (evt) {
+            if (this.model.get('id')){
+                // remove the model
+                this.model.destroy({wait:true});
+                // add a new 'empty' model
+                this.collection.add(new ProviderResponse({
+                    'provider': this.model.get('provider'),
+                    'status': this.model.get('status'),
+                    'imagery_request': this.model.get('imagery_request')
+                }));
+
+            } else {
+                // save model to the server
+                this.model.save({}, {'wait':true});
+            }
+        }
+
+    });
+
+    var ProviderResponseView = Backbone.View.extend({
+        el: '#providerResponseView',
+
+        _add_empty_provider_responses: function(options) {
+            var self=this;
+
+            var statuses = this.$el.find("thead th[data-status-id]");
+            var providers = this.$el.find("tbody tr[data-provider-id]");
+
+            // extract/flatten live model attributes
+            var live_models = [];
+
+            _.each(self.collection.models, function (model) {
+                live_models.push(model.attributes);
+            });
+
+            _.each(providers, function (provider) {
+                _.each(statuses, function (status) {
+                    var _status_id = $(status).data('status-id');
+                    var _provider_id = $(provider).data('provider-id');
+
+                    var test = _.findWhere(live_models, {
+                        'provider': _provider_id,
+                        'status': _status_id,
+                        'imagery_request': options.imagery_request_id
+                    });
+                    // add a missing model
+                    if (test === undefined) {
+                        self.collection.add(
+                            new ProviderResponse({
+                                'provider': _provider_id,
+                                'status': _status_id,
+                                'imagery_request': options.imagery_request_id
+                            })
+                        );
+                    }
+                });
+            });
+        },
+
+        initialize: function(options) {
+            var self=this;
+            this.collection = new ProviderResponseList();
+            this.collection.fetch({
+                'data': {'imagery_request':options.imagery_request_id},
+                'success': function(model, resp, opt) {
+                    self._add_empty_provider_responses(options);
+                    self.render();
+                },
+            });
+
+            // this.collection.bind('reset', this.render, this);
+            this.collection.bind('destroy', this.render, this);
+            // this.collection.bind('change', this.render, this);
+        },
+
+        render: function() {
+            var self=this;
+            _.each(this.collection.models, function (model) {
+                var provider_id = model.get('provider');
+                var status_id = model.get('status');
+
+                var proRespItemView = new ProviderResponseItemView({
+                    model:model,
+                    collection:self.collection
+                });
+
+                // find the element and update it
+                self.$el.find('tr[data-provider-id='+provider_id+']').find('td[data-status-id='+status_id+']').html(proRespItemView.render().el);
+            });
+            return this;
+        }
+    });
+
+    var providerResponseView = new ProviderResponseView({'imagery_request_id':{{ object.pk }}});
     </script>
+
 {% endblock %}

@@ -13,6 +13,8 @@ from django import http
 
 from braces.views import LoginRequiredMixin, JSONResponseMixin
 
+from providers.models import Provider, ProviderStatus
+
 from .forms import (
     ImageryRequestForm,
     ImageryRequestEditForm,
@@ -120,6 +122,20 @@ class ViewRequest(LoginRequiredMixin, DetailView):
     context_object_name = 'request'
     model = ImageryRequest
     template_name = 'request_view.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ViewRequest, self).get_context_data(**kwargs)
+
+        providers = Provider.objects.values('name', 'pk')
+        statuses = (
+            ProviderStatus.objects.order_by('order').values('pk', 'title')
+        )
+
+        context.update({
+            'providers': providers, 'statuses': statuses
+        })
+
+        return context
 
 
 class DownloadRequest(LoginRequiredMixin, BaseDetailView):
