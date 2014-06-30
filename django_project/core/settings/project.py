@@ -54,6 +54,7 @@ PIPELINE_JS = {
             'js/jquery-1.11.1.min.js',
             'js/csrf-ajax.js',
             'js/underscore-min.js',
+            'js/backbone-min.js',
             'js/templates/*.jst',
             'js/semantic.min.js',
             'js/leaflet.js',
@@ -66,15 +67,6 @@ PIPELINE_JS = {
             'js/map.js'
         ),
         'output_filename': 'js/contrib.js',
-    },
-    'ember': {
-        'source_filenames': (
-            'js/handlebars-v1.3.0.js',
-            'ember.prod.js',
-            'ember-data.prod.js',
-            'ember-data-django-rest-adapter.prod.js',
-        ),
-        'output_filename': 'js/ember.js',
     }
 }
 
