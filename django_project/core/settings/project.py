@@ -58,6 +58,7 @@ PIPELINE_JS = {
             'js/csrf-ajax.js',
             'js/underscore-min.js',
             'js/backbone.js',
+            'js/backbone.marionette.js',
             'js/templates/*.jst',
             'js/semantic.min.js',
             'js/leaflet.js',

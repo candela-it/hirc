@@ -12,8 +12,14 @@ from django.views.generic.detail import BaseDetailView
 from django import http
 
 from braces.views import LoginRequiredMixin, JSONResponseMixin
+from rest_framework.renderers import JSONRenderer
 
-from providers.models import Provider, ProviderStatus
+from providers.models import Provider, ProviderStatus, ProviderResponse
+from providers.serializers import (
+    ProviderSerializer,
+    ProviderStatusSerializer,
+    ProviderResponseSerializer
+)
 
 from .forms import (
     ImageryRequestForm,
@@ -126,13 +132,26 @@ class ViewRequest(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(ViewRequest, self).get_context_data(**kwargs)
 
-        providers = Provider.objects.values('name', 'pk')
+        providers = Provider.objects.all()
         statuses = (
-            ProviderStatus.objects.order_by('order').values('pk', 'title')
+            ProviderStatus.objects.order_by('order').all()
+        )
+        providerresponses = (
+            ProviderResponse.objects
+            .filter(imagery_request=self.object.pk)
+            .all()
         )
 
         context.update({
-            'providers': providers, 'statuses': statuses
+            'providers': JSONRenderer().render(
+                ProviderSerializer(providers, many=True).data
+            ),
+            'statuses': JSONRenderer().render(
+                ProviderStatusSerializer(statuses, many=True).data
+            ),
+            'providerresponses': JSONRenderer().render(
+                ProviderResponseSerializer(providerresponses, many=True).data
+            )
         })
 
         return context
