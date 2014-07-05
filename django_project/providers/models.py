@@ -33,5 +33,8 @@ class ProviderResponse(models.Model):
         'providers.Provider', related_name='responses'
     )
 
+    class Meta:
+        unique_together = ('imagery_request', 'status', 'provider')
+
 # register model with reversion
 reversion.register(ProviderStatus)

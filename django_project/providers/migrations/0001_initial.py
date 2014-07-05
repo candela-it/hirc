@@ -20,7 +20,7 @@ class Migration(SchemaMigration):
         db.create_table(u'providers_provider', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('name', self.gf('django.db.models.fields.CharField')(unique=True, max_length=30)),
-            ('representative', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['imagery_requests.CustomUser'], null=True)),
+            ('representative', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['imagery_requests.CustomUser'], null=True, blank=True)),
         ))
         db.send_create_signal(u'providers', ['Provider'])
 
@@ -29,12 +29,18 @@ class Migration(SchemaMigration):
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('imagery_request', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['imagery_requests.ImageryRequest'])),
             ('status', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['providers.ProviderStatus'])),
-            ('provider', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['providers.Provider'])),
+            ('provider', self.gf('django.db.models.fields.related.ForeignKey')(related_name='responses', to=orm['providers.Provider'])),
         ))
         db.send_create_signal(u'providers', ['ProviderResponse'])
 
+        # Adding unique constraint on 'ProviderResponse', fields ['imagery_request', 'status', 'provider']
+        db.create_unique(u'providers_providerresponse', ['imagery_request_id', 'status_id', 'provider_id'])
+
 
     def backwards(self, orm):
+        # Removing unique constraint on 'ProviderResponse', fields ['imagery_request', 'status', 'provider']
+        db.delete_unique(u'providers_providerresponse', ['imagery_request_id', 'status_id', 'provider_id'])
+
         # Deleting model 'ProviderStatus'
         db.delete_table(u'providers_providerstatus')
 
@@ -83,7 +89,7 @@ class Migration(SchemaMigration):
         },
         u'imagery_requests.imageryrequest': {
             'Meta': {'object_name': 'ImageryRequest'},
-            'area_of_interest': ('django.contrib.gis.db.models.fields.PolygonField', [], {}),
+            'area_of_interest': ('django.contrib.gis.db.models.fields.MultiPolygonField', [], {}),
             'created_by': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'created'", 'to': u"orm['imagery_requests.CustomUser']"}),
             'description': ('django.db.models.fields.TextField', [], {'blank': 'True'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
@@ -101,13 +107,13 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'Provider'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'name': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'}),
-            'representative': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['imagery_requests.CustomUser']", 'null': 'True'})
+            'representative': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['imagery_requests.CustomUser']", 'null': 'True', 'blank': 'True'})
         },
         u'providers.providerresponse': {
-            'Meta': {'object_name': 'ProviderResponse'},
+            'Meta': {'unique_together': "(('imagery_request', 'status', 'provider'),)", 'object_name': 'ProviderResponse'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'imagery_request': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['imagery_requests.ImageryRequest']"}),
-            'provider': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['providers.Provider']"}),
+            'provider': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'responses'", 'to': u"orm['providers.Provider']"}),
             'status': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['providers.ProviderStatus']"})
         },
         u'providers.providerstatus': {
