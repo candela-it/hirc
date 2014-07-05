@@ -59,7 +59,6 @@ PIPELINE_JS = {
             'js/underscore-min.js',
             'js/backbone.js',
             'js/backbone.marionette.js',
-            'js/templates/*.jst',
             'js/semantic.min.js',
             'js/leaflet.js',
             'js/leaflet.draw.js',
@@ -67,10 +66,22 @@ PIPELINE_JS = {
             'js/tiles/Bing.js',
             'js/Leaflet.MakiMarkers.js',
             'js/jquery.plugin.js',
-            'js/jquery.datepick.js',
-            'js/map.js'
+            'js/jquery.datepick.js'
         ),
         'output_filename': 'js/contrib.js',
+    },
+    'templates': {
+        'source_filenames': (
+            'js/templates/*.jst',
+        ),
+        'output_filename': 'js/templates.js',
+    },
+    'application': {
+        'source_filenames': (
+            'js/map.js',
+            'js/providers.js'
+        ),
+        'output_filename': 'js/application.js',
     }
 }
 
