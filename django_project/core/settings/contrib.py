@@ -8,7 +8,8 @@ INSTALLED_APPS += (
     'django.contrib.humanize',
     'django.contrib.comments',
     'django_comments_xtd',
-    'social.apps.django_app.default'
+    'social.apps.django_app.default',
+    'rest_framework'
 )
 
 # use underscore template function
@@ -35,3 +36,24 @@ AUTHENTICATION_BACKENDS = (
 
 SOCIAL_AUTH_OPENSTREETMAP_KEY = 'LBqrPd0Y3YE9RKkn4RUVc5sDDcoVjbYpart7qdsr'
 SOCIAL_AUTH_OPENSTREETMAP_SECRET = 'sFlquDZLeU1aqsYCIbMAetLVrELunyIvV7mPCR2Q'
+
+
+# django rest framework
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+    ),
+    'DEFAULT_FILTER_BACKENDS': (
+        'rest_framework.filters.DjangoFilterBackend',
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
+}

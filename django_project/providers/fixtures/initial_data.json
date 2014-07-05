@@ -1,0 +1,50 @@
+[
+{
+    "pk": 1, 
+    "model": "providers.providerstatus", 
+    "fields": {
+        "order": 0, 
+        "title": "Contacted"
+    }
+},
+{
+    "pk": 2, 
+    "model": "providers.providerstatus", 
+    "fields": {
+        "order": 10, 
+        "title": "Discussing"
+    }
+},
+{
+    "pk": 3, 
+    "model": "providers.providerstatus", 
+    "fields": {
+        "order": 20, 
+        "title": "Declined"
+    }
+},
+{
+    "pk": 4, 
+    "model": "providers.providerstatus", 
+    "fields": {
+        "order": 30, 
+        "title": "Approved"
+    }
+},
+{
+    "pk": 1, 
+    "model": "providers.provider", 
+    "fields": {
+        "name": "Bing", 
+        "representative": null
+    }
+},
+{
+    "pk": 2, 
+    "model": "providers.provider", 
+    "fields": {
+        "name": "Landsat", 
+        "representative": null
+    }
+}
+]

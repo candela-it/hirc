@@ -2,6 +2,24 @@
 
 {% block content %}
 <div class="ui vertically divided grid">
+{# show provider reponse overview only to staff user#}
+{% if user.is_staff %}
+<div class="two column row">
+    <div class='column'>
+        <h4>Provider information</h4>
+        <div>
+            <table class="ui table segment compact">
+            <thead id="status-list">
+            </thead>
+            <tbody id="provider-response-list">
+            </tbody>
+            </table>
+        </div>
+    </div>
+    <div class='column'>
+    </div>
+</div>
+{% endif %}
     <div class="two column row">
         <div class="column">
         <h4>Request information</h4>
@@ -92,6 +110,7 @@
 
 {% block extra_js %}
     <script type="text/javascript">
+
         $('#menu_imagery').addClass('active');
         initMap();
 
@@ -339,5 +358,19 @@
         }).fail(function(response) {
         })
     });
+
+    {# show provider response overview only to staff user#}
+    {% if user.is_staff %}
+
+    // start application and pass initial data
+    MyApp.start({
+        imagery_request_id: {{ object.pk }},
+        statuses: new Statuses({{ statuses|safe }}),
+        providers: new Providers({{ providers|safe }}),
+        providerresponses: new ProviderResponseCol({{ providerresponses|safe }})
+    });
+
+    {% endif %}
     </script>
+
 {% endblock %}

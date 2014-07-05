@@ -21,6 +21,7 @@ DATABASES = {
 INSTALLED_APPS += (
     'imagery_requests',
     'questions',
+    'providers',
     'web'
 )
 
@@ -30,6 +31,8 @@ INSTALLED_APPS += (
     'reversion',
 )
 
+# URI must be perfect, don't automagically append slash
+APPEND_SLASH = False
 
 # define settings which are readable from templates
 TEMPLATE_READABLE_VALUES = ("PROJECT_TITLE", )
@@ -42,7 +45,7 @@ AUTH_USER_MODEL = 'imagery_requests.CustomUser'
 
 # redirect logged in user to the home page
 LOGIN_REDIRECT_URL = '/'
-LOGIN_URL = '/login/openstreetmap'
+LOGIN_URL = '/login/openstreetmap/'
 
 # Set debug to false for production
 DEBUG = TEMPLATE_DEBUG = False
@@ -54,7 +57,8 @@ PIPELINE_JS = {
             'js/jquery-1.11.1.min.js',
             'js/csrf-ajax.js',
             'js/underscore-min.js',
-            'js/templates/*.jst',
+            'js/backbone.js',
+            'js/backbone.marionette.js',
             'js/semantic.min.js',
             'js/leaflet.js',
             'js/leaflet.draw.js',
@@ -62,10 +66,22 @@ PIPELINE_JS = {
             'js/tiles/Bing.js',
             'js/Leaflet.MakiMarkers.js',
             'js/jquery.plugin.js',
-            'js/jquery.datepick.js',
-            'js/map.js'
+            'js/jquery.datepick.js'
         ),
         'output_filename': 'js/contrib.js',
+    },
+    'templates': {
+        'source_filenames': (
+            'js/templates/*.jst',
+        ),
+        'output_filename': 'js/templates.js',
+    },
+    'application': {
+        'source_filenames': (
+            'js/map.js',
+            'js/providers.js'
+        ),
+        'output_filename': 'js/application.js',
     }
 }
 
