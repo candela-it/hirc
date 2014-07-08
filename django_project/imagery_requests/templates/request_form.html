@@ -150,21 +150,35 @@
     });
     map.addControl(drawControl);
 
+    // Initialise line util.
+    var lineUtil = L.LineUtil;
+    // Signal if drawing is activated. Initially it's not active.
+    var drawIsActive = false;
+
+    map.on('draw:drawstart', function (e) {
+      drawIsActive = true;
+    });
+
     map.on('draw:created', function (e) {
         var type = e.layerType;
         var layer = e.layer;
+        drawIsActive = false;
 
         // delete previous layer
-        drawnItems.clearLayers();
+        // drawnItems.clearLayers();
 
         drawnItems.addLayer(layer);
 
         // dump to textarea
         $('#id_area_of_interest').val(JSON.stringify(layer.toGeoJSON()['geometry']));
+
+        // Set previuos_point var to null because next polygon won't have
+        // previous_point immediately.
+        previous_point = null;
     });
 
     map.on('draw:drawstop', function (e) {
-      var type = e.layerType;
+      drawIsActive = false;
     });
 
     map.on('draw:edited', function (e) {
@@ -181,7 +195,99 @@
         });
     });
 
-    //map.fitBounds(drawnItems.getBounds());
+    var previous_point = null;
+    var current_point = null;
+
+    map.on('click', function(e) {
+        // If drawing is activated check if new point is inside existing polygon or
+        // new line segment intersects with any of the existing line segments.
+        if (drawIsActive == true) {
+            current_point = [e.layerPoint.x, e.layerPoint.y];
+            var polygons = [];
+            var layers = drawnItems.getLayers();
+
+            // If other polygons exist then go through the checking process.
+            if (layers.length > 0) {
+                // For each layer (polygon) get it's points coords. in pixels.
+                jQuery.each(layers, function () {
+                    var polygon_points = this._originalPoints;
+                    var clean_polygon_points = [];
+
+                    jQuery.each(polygon_points, function() {
+                        clean_polygon_points.push([this.x, this.y]);
+                    });
+
+                    polygons.push(clean_polygon_points);
+                });
+
+                // Check if current point is inside existing polygon,
+                // (important only for the first point of polygon).
+                // For each polygon check if current line segment intersects
+                // any line segement of the polygon.
+                jQuery.each(polygons, function() {
+                    // If previous_point exists (means that line segment exists)
+                    // check intersections.
+                    if (previous_point) {
+                        p1 = {x: previous_point[0], y: previous_point[1]};
+                        p2 = {x: current_point[0], y: current_point[1]};
+
+                        for (i=0, j=this.length-1;i<this.length; j=i++) {
+                            var p3 = {x: this[i][0], y: this[i][1]};
+                            var p4 = {x: this[j][0], y: this[j][1]};
+
+                            var intersects = lineUtil.segmentsIntersect(p1, p2, p3, p4);
+
+                            if (intersects == true) {
+                                // Programatically click link to delete the last vertex.
+                                $('.leaflet-draw-actions li a:first')[0].click();
+                                // Revert value of current_point to previous_point.
+                                current_point = previous_point;
+                                return false; // break jquery each loop and current loop
+                            }
+                        }
+                    } else {
+                        var pointIsInPolygon = point_in_polygon(current_point, this);
+
+                        // If current point is inside existing polygon then delete
+                        // that point and show error message.
+                        if (pointIsInPolygon == true) {
+                            // Programatically click link to delete created vertex.
+                            $('.leaflet-draw-actions li a:eq(1)')[0].click();
+                            return false; // break jquery each loop
+                        }
+                    }
+                });
+            }
+            // Set value of previous point to current_point for future.
+            previous_point = current_point
+        }
+    });
+
+    // When link for drawing polygon is clicked then add event listener for 'cancel' link.
+    $('.leaflet-draw-section .leaflet-draw-toolbar a:eq(0)').on('click', function() {
+          // When cancel drawing link is clicked (either programatically or manually)
+          // reset value of current point and previous point.
+          $('.leaflet-draw-actions li a:eq(1)').on('click', function() {
+              current_point = null;
+              previous_point = null;
+          });
+    });
+
+    // Function that checks if point is inside polygon.
+    function point_in_polygon (point, polygon) {
+        var x = point[0], y = point[1];
+
+        var inside = false;
+        for (var i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+            var xi = polygon[i][0], yi = polygon[i][1];
+            var xj = polygon[j][0], yj = polygon[j][1];
+
+            var intersect = ((yi > y) != (yj > y))
+                && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+            if (intersect) inside = !inside;
+        }
+        return inside;
+    }
 
   </script>
 {% endblock %}
