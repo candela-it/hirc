@@ -150,8 +150,6 @@
     });
     map.addControl(drawControl);
 
-    // Initialise line util.
-    var lineUtil = L.LineUtil;
     // Signal if drawing is activated. Initially it's not active.
     var drawIsActive = false;
 
@@ -160,14 +158,40 @@
     });
 
     map.on('draw:created', function (e) {
-        var type = e.layerType;
         var layer = e.layer;
         drawIsActive = false;
 
-        // delete previous layer
-        // drawnItems.clearLayers();
-
         drawnItems.addLayer(layer);
+
+        // Layers list.
+        var layers = drawnItems.getLayers();
+
+        // Check after drawing: line segments intersection; point in another polygon;
+        // polygon overlaps another polygon.
+        // Important because sometimes checks during drawing are not made.
+        // It can happen because sometimes map.on('click') event listener doesn't
+        // "get" that click (e.g., when you draw points on map quickly).
+        if (layers.length > 1) {
+
+            var polygons = get_cleaned_polygons(layers);
+            var trouble_polygons = check_after_drawing(polygons)
+
+            if (trouble_polygons.length > 0) {
+                var polygon_counter = 0;
+
+                for (var key in drawnItems._layers) {
+                    if($.inArray(polygon_counter, trouble_polygons) != -1) {
+                        drawnItems._layers[key].setStyle({
+                            fillColor: '#ca4c4d',
+                            color: '#ca4c4d'
+                        });
+
+                    }
+
+                    polygon_counter++
+                }
+            }
+        }
 
         // dump to textarea
         $('#id_area_of_interest').val(JSON.stringify(layer.toGeoJSON()['geometry']));
@@ -182,7 +206,8 @@
     });
 
     map.on('draw:edited', function (e) {
-        var layers = e.layers;
+        layers = e.layers;
+
         layers.eachLayer(function (layer) {
             $('#id_area_of_interest').val(JSON.stringify(layer.toGeoJSON()['geometry']));
         });
@@ -203,22 +228,11 @@
         // new line segment intersects with any of the existing line segments.
         if (drawIsActive == true) {
             current_point = [e.layerPoint.x, e.layerPoint.y];
-            var polygons = [];
             var layers = drawnItems.getLayers();
 
             // If other polygons exist then go through the checking process.
             if (layers.length > 0) {
-                // For each layer (polygon) get it's points coords. in pixels.
-                jQuery.each(layers, function () {
-                    var polygon_points = this._originalPoints;
-                    var clean_polygon_points = [];
-
-                    jQuery.each(polygon_points, function() {
-                        clean_polygon_points.push([this.x, this.y]);
-                    });
-
-                    polygons.push(clean_polygon_points);
-                });
+                polygons = get_cleaned_polygons(layers)
 
                 // Check if current point is inside existing polygon,
                 // (important only for the first point of polygon).
@@ -228,14 +242,14 @@
                     // If previous_point exists (means that line segment exists)
                     // check intersections.
                     if (previous_point) {
-                        p1 = {x: previous_point[0], y: previous_point[1]};
-                        p2 = {x: current_point[0], y: current_point[1]};
+                        var p1 = {x: previous_point[0], y: previous_point[1]};
+                        var p2 = {x: current_point[0], y: current_point[1]};
 
                         for (i=0, j=this.length-1;i<this.length; j=i++) {
                             var p3 = {x: this[i][0], y: this[i][1]};
                             var p4 = {x: this[j][0], y: this[j][1]};
 
-                            var intersects = lineUtil.segmentsIntersect(p1, p2, p3, p4);
+                            var intersects = L.LineUtil.segmentsIntersect(p1, p2, p3, p4);
 
                             if (intersects == true) {
                                 // Programatically click link to delete the last vertex.
@@ -259,7 +273,7 @@
                 });
             }
             // Set value of previous point to current_point for future.
-            previous_point = current_point
+            previous_point = current_point;
         }
     });
 
@@ -272,6 +286,64 @@
               previous_point = null;
           });
     });
+
+    function check_after_drawing(polygons) {
+        var trouble_polygons = [];
+
+        // Check if any line segemnt of any polygon intersects with any line
+        // segment of any other polygon.
+        for (var i = 0, j = polygons.length - 1; i < polygons.length; j = i++) {
+            var poly_a = polygons[i];
+            var poly_b = polygons[j];
+
+            for (var k = 0, h = poly_a.length - 1; k < poly_a.length; h = k++) {
+                var p_1a = {x: poly_a[k][0], y: poly_a[k][1]};
+                var p_2a = {x: poly_a[h][0], y: poly_a[h][1]};
+
+                for (var e = 0, f = poly_b.length - 1; e < poly_b.length; f = e++) {
+                    var p_1b = {x: poly_b[e][0], y: poly_b[e][1]};
+                    var p_2b = {x: poly_b[f][0], y: poly_b[f][1]};
+
+                    var intersects = L.LineUtil.segmentsIntersect(p_1a, p_2a, p_1b, p_2b);
+
+                    if (intersects == true) {
+                        if( $.inArray(i, trouble_polygons) == -1 ) {
+                            trouble_polygons.push(i);
+                        }
+
+                        if ($.inArray(j, trouble_polygons) == -1 ) {
+                                trouble_polygons.push(j);
+                        }
+                    }
+                }
+            }
+            // If there are only 2 polgons, break the loop. We don't need to
+            // do the process for 1st-2nd and 2nd-1st pair of polygons.
+            if (polygons.length == 2) {
+                break;
+            }
+        }
+
+        return trouble_polygons;
+    }
+
+    function get_cleaned_polygons(layers) {
+        var polygons = [];
+
+        // For each layer (polygon) get it's points coords. in pixels.
+        jQuery.each(layers, function () {
+            var polygon_points = this._originalPoints;
+            var clean_polygon_points = [];
+
+            jQuery.each(polygon_points, function() {
+                clean_polygon_points.push([this.x, this.y]);
+            });
+
+            polygons.push(clean_polygon_points);
+        });
+
+        return polygons;
+    }
 
     // Function that checks if point is inside polygon.
     function point_in_polygon (point, polygon) {
