@@ -206,11 +206,41 @@
     });
 
     map.on('draw:edited', function (e) {
-        layers = e.layers;
+        // Layers list.
+        var layers = drawnItems.getLayers();
 
-        layers.eachLayer(function (layer) {
-            $('#id_area_of_interest').val(JSON.stringify(layer.toGeoJSON()['geometry']));
-        });
+        if (layers.length > 1) {
+            var polygons = get_cleaned_polygons(layers);
+            var trouble_polygons = check_after_drawing(polygons)
+
+            // Set default color to every polygon (assume they are correct).
+            for (var key in drawnItems._layers) {
+                drawnItems._layers[key].setStyle({
+                    fillColor: '#FFA500',
+                    color: '#FFA500'
+                });
+            }
+
+            // Set "error" color to trouble polygons.
+            if (trouble_polygons.length > 0) {
+                var polygon_counter = 0;
+
+                for (var key in drawnItems._layers) {
+                    if($.inArray(polygon_counter, trouble_polygons) != -1) {
+                        drawnItems._layers[key].setStyle({
+                            fillColor: '#ca4c4d',
+                            color: '#ca4c4d'
+                        });
+                    }
+
+                    polygon_counter++
+                }
+            }
+        }
+
+        // layers.eachLayer(function (layer) {
+        //     $('#id_area_of_interest').val(JSON.stringify(layer.toGeoJSON()['geometry']));
+        // });
     });
 
     map.on('draw:deleted', function (e) {
