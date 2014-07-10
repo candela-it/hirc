@@ -176,7 +176,10 @@
         if (layers.length > 1) {
 
             var polygons = get_cleaned_polygons(layers);
-            var trouble_polygons = check_after_drawing(polygons);
+
+            var result = check_after_drawing(polygons);
+            var trouble_polygons = result.trouble_polygons;
+            var error_messages = result.error_messages;
 
             if (trouble_polygons.length > 0) {
                 var polygon_counter = 0;
@@ -220,51 +223,11 @@
         if (isEditionSaved == true) {
             // Layers list.
             var layers = drawnItems.getLayers();
-
-            if (layers.length > 1) {
-                var polygons = get_cleaned_polygons(layers);
-                var trouble_polygons = check_after_drawing(polygons);
-
-                // Set "error" color to trouble polygons and default color to
-                // regular polygons.
-                var polygon_counter = 0;
-
-                for (var key in drawnItems._layers) {
-                    if($.inArray(polygon_counter, trouble_polygons) != -1) {
-                        drawnItems._layers[key].setStyle({
-                            fillColor: '#ca4c4d',
-                            color: '#ca4c4d'
-                        });
-                    } else {
-                        // Set default color.
-                        drawnItems._layers[key].setStyle({
-                            fillColor: '#FFA500',
-                            color: '#FFA500'
-                        });
-                    }
-                    polygon_counter++;
-                }
-            }
-
-            // layers.eachLayer(function (layer) {
-            //     $('#id_area_of_interest').val(JSON.stringify(layer.toGeoJSON()['geometry']));
-            // });
-        }
-        isEditionSaved = false;
-    });
-
-    map.on('draw:deleted', function (e) {
-        // var layers = e.layers;
-        // layers.eachLayer(function (layer) {
-        //     $('#id_area_of_interest').val('');
-        // });
-
-        // Layers list.
-        var layers = drawnItems.getLayers();
-
-        if (layers.length > 1) {
             var polygons = get_cleaned_polygons(layers);
-            var trouble_polygons = check_after_drawing(polygons);
+
+            var result = check_after_drawing(polygons);
+            var trouble_polygons = result.trouble_polygons;
+            var error_messages = result.error_messages;
 
             // Set "error" color to trouble polygons and default color to
             // regular polygons.
@@ -283,16 +246,51 @@
                         color: '#FFA500'
                     });
                 }
+
                 polygon_counter++;
             }
-        } else {
-            // Set default color to only polygon left.
-            for (var key in drawnItems._layers) {
+
+            // layers.eachLayer(function (layer) {
+            //     $('#id_area_of_interest').val(JSON.stringify(layer.toGeoJSON()['geometry']));
+            // });
+        }
+
+        isEditionSaved = false;
+    });
+
+    map.on('draw:deleted', function (e) {
+        // var layers = e.layers;
+        // layers.eachLayer(function (layer) {
+        //     $('#id_area_of_interest').val('');
+        // });
+
+        // Layers list.
+        var layers = drawnItems.getLayers();
+        var polygons = get_cleaned_polygons(layers);
+
+        var result = check_after_drawing(polygons);
+        var trouble_polygons = result.trouble_polygons;
+        var error_messages = result.error_messages;
+
+        // Set "error" color to trouble polygons and default color to
+        // regular polygons.
+        var polygon_counter = 0;
+
+        for (var key in drawnItems._layers) {
+            if($.inArray(polygon_counter, trouble_polygons) != -1) {
+                drawnItems._layers[key].setStyle({
+                    fillColor: '#ca4c4d',
+                    color: '#ca4c4d'
+                });
+            } else {
+                // Set default color.
                 drawnItems._layers[key].setStyle({
                     fillColor: '#FFA500',
                     color: '#FFA500'
-                  });
+                });
             }
+
+            polygon_counter++;
         }
     });
 
@@ -365,42 +363,147 @@
 
     function check_after_drawing(polygons) {
         var trouble_polygons = [];
+        var error_messages = []
 
-        // Check if any line segemnt of any polygon intersects with any line
-        // segment of any other polygon.
-        for (var i = 0, j = polygons.length - 1; i < polygons.length; j = i++) {
-            var poly_a = polygons[i];
-            var poly_b = polygons[j];
+        // Check if any polygon intersects any other polygon.
+        // Check if any polygon covers any other polygon.
+        // Check if polygon intersects itself. Leaflet Draw plugin does that
+        // check during drawing, but not after polygons are edited.
+        jQuery.each(polygons, function(index_a, poly_a) {
+
+            jQuery.each(polygons, function(index_b, poly_b) {
+
+                if (poly_b != poly_a) {
+
+                    var result = polygon_intersects_polygon(
+                                    error_messages, trouble_polygons,
+                                    poly_a, index_a,
+                                    poly_b, index_b);
+
+                    trouble_polygons = result.trouble_polygons;
+                    error_messages = result.error_messages;
+
+                    var result = polygon_covers_polygon(
+                                    error_messages, trouble_polygons,
+                                    poly_a, index_a,
+                                    poly_b, index_b);
+
+                    trouble_polygons = result.trouble_polygons;
+                    error_messages = result.error_messages;
+                }
+            });
+
+            var result = polygon_intersects_itself(
+                            error_messages, trouble_polygons,
+                            poly_a, index_a);
+
+            trouble_polygons = result.trouble_polygons;
+            error_messages = result.error_messages;
+        });
+
+        return {
+            trouble_polygons: trouble_polygons,
+            error_messages: error_messages
+        }
+    }
+
+    // Check if any line segment of any polygon intersects with any line
+    // segment of any other polygon.
+    function polygon_intersects_polygon(error_messages, trouble_polygons, poly_a, index_a, poly_b, index_b) {
+        var error_message = "Area shouldn't intersect with another area."
+
+        for (var k = 0, h = poly_a.length - 1; k < poly_a.length; h = k++) {
+            var p_1a = {x: poly_a[k][0], y: poly_a[k][1]};
+            var p_2a = {x: poly_a[h][0], y: poly_a[h][1]};
+
+            for (var e = 0, f = poly_b.length - 1; e < poly_b.length; f = e++) {
+                var p_1b = {x: poly_b[e][0], y: poly_b[e][1]};
+                var p_2b = {x: poly_b[f][0], y: poly_b[f][1]};
+
+                var intersects = L.LineUtil.segmentsIntersect(p_1a, p_2a, p_1b, p_2b);
+
+                if (intersects == true) {
+                    if( $.inArray(index_a, trouble_polygons) == -1 ) {
+                        trouble_polygons.push(index_a);
+                    }
+
+                    if ($.inArray(index_b, trouble_polygons) == -1 ) {
+                        trouble_polygons.push(index_b);
+                    }
+
+                    if ($.inArray(error_message, error_messages) == -1 ) {
+                        error_messages.push(error_message);
+                    }
+                }
+            }
+        }
+
+        return {
+            trouble_polygons: trouble_polygons,
+            error_messages: error_messages
+        }
+    }
+
+    // Check if any polygon covers any other polygon. We're actually checking
+    // if point from one polygon lies inside another polygon.
+    function polygon_covers_polygon(error_messages, trouble_polygons, poly_a, index_a, poly_b, index_b) {
+        var error_message = "Area shouldn't cover another area."
+
+        jQuery.each(poly_a, function(point_index, point) {
+            var pointIsInPolygon = point_in_polygon(point, poly_b);
+
+            if (pointIsInPolygon == true) {
+                if( $.inArray(index_a, trouble_polygons) == -1 ) {
+                    trouble_polygons.push(index_a);
+                }
+
+                if( $.inArray(index_b, trouble_polygons) == -1 ) {
+                    trouble_polygons.push(index_b);
+                }
+
+                if ($.inArray(error_message, error_messages) == -1 ) {
+                    error_messages.push(error_message);
+                }
+            }
+        });
+
+        return {
+            trouble_polygons: trouble_polygons,
+            error_messages: error_messages
+        }
+    }
+
+    function polygon_intersects_itself(error_messages, trouble_polygons, poly_a, index_a) {
+        var error_message = "Area shouldn't intersect with itself."
+
+        for (var i = 0, j = poly_a.length - 1; i < poly_a.length; j = i++) {
+            var p_1 = {x: poly_a[i][0], y: poly_a[i][1]}
+            var p_2 = {x: poly_a[j][0], y: poly_a[j][1]}
 
             for (var k = 0, h = poly_a.length - 1; k < poly_a.length; h = k++) {
-                var p_1a = {x: poly_a[k][0], y: poly_a[k][1]};
-                var p_2a = {x: poly_a[h][0], y: poly_a[h][1]};
+                var p_3 = {x: poly_a[h][0], y: poly_a[h][1]}
+                var p_4 = {x: poly_a[k][0], y: poly_a[k][1]}
 
-                for (var e = 0, f = poly_b.length - 1; e < poly_b.length; f = e++) {
-                    var p_1b = {x: poly_b[e][0], y: poly_b[e][1]};
-                    var p_2b = {x: poly_b[f][0], y: poly_b[f][1]};
-
-                    var intersects = L.LineUtil.segmentsIntersect(p_1a, p_2a, p_1b, p_2b);
+                if (p_3 != p_1 && p_4 != p_2) {
+                    var intersects = L.LineUtil.segmentsIntersect(p_1, p_2, p_3, p_4);
 
                     if (intersects == true) {
-                        if( $.inArray(i, trouble_polygons) == -1 ) {
-                            trouble_polygons.push(i);
+                        if( $.inArray(index_a, trouble_polygons) == -1 ) {
+                            trouble_polygons.push(index_a);
                         }
 
-                        if ($.inArray(j, trouble_polygons) == -1 ) {
-                                trouble_polygons.push(j);
+                        if ($.inArray(error_message, error_messages) == -1 ) {
+                            error_messages.push(error_message);
                         }
                     }
                 }
             }
-            // If there are only 2 polgons, break the loop. We don't need to
-            // do the process for 1st-2nd and 2nd-1st pair of polygons.
-            if (polygons.length == 2) {
-                break;
-            }
         }
 
-        return trouble_polygons;
+        return {
+            trouble_polygons: trouble_polygons,
+            error_messages: error_messages
+        }
     }
 
     function get_cleaned_polygons(layers) {
