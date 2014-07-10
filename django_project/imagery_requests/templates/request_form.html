@@ -162,7 +162,6 @@
     map.on('draw:created', function (e) {
         var layer = e.layer;
         drawIsActive = false;
-        console.log('nacrtano')
 
         drawnItems.addLayer(layer);
 
@@ -255,10 +254,46 @@
     });
 
     map.on('draw:deleted', function (e) {
-        var layers = e.layers;
-        layers.eachLayer(function (layer) {
-            $('#id_area_of_interest').val('');
-        });
+        // var layers = e.layers;
+        // layers.eachLayer(function (layer) {
+        //     $('#id_area_of_interest').val('');
+        // });
+
+        // Layers list.
+        var layers = drawnItems.getLayers();
+
+        if (layers.length > 1) {
+            var polygons = get_cleaned_polygons(layers);
+            var trouble_polygons = check_after_drawing(polygons);
+
+            // Set "error" color to trouble polygons and default color to
+            // regular polygons.
+            var polygon_counter = 0;
+
+            for (var key in drawnItems._layers) {
+                if($.inArray(polygon_counter, trouble_polygons) != -1) {
+                    drawnItems._layers[key].setStyle({
+                        fillColor: '#ca4c4d',
+                        color: '#ca4c4d'
+                    });
+                } else {
+                    // Set default color.
+                    drawnItems._layers[key].setStyle({
+                        fillColor: '#FFA500',
+                        color: '#FFA500'
+                    });
+                }
+                polygon_counter++;
+            }
+        } else {
+            // Set default color to only polygon left.
+            for (var key in drawnItems._layers) {
+                drawnItems._layers[key].setStyle({
+                    fillColor: '#FFA500',
+                    color: '#FFA500'
+                  });
+            }
+        }
     });
 
     var previous_point = null;
