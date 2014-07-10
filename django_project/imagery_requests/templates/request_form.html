@@ -152,6 +152,8 @@
 
     // Signal if drawing is activated. Initially it's not active.
     var drawIsActive = false;
+    // Signal if edition is saved. Used for draw:editstop event.
+    var isEditionSaved = false;
 
     map.on('draw:drawstart', function (e) {
       drawIsActive = true;
@@ -160,6 +162,7 @@
     map.on('draw:created', function (e) {
         var layer = e.layer;
         drawIsActive = false;
+        console.log('nacrtano')
 
         drawnItems.addLayer(layer);
 
@@ -174,7 +177,7 @@
         if (layers.length > 1) {
 
             var polygons = get_cleaned_polygons(layers);
-            var trouble_polygons = check_after_drawing(polygons)
+            var trouble_polygons = check_after_drawing(polygons);
 
             if (trouble_polygons.length > 0) {
                 var polygon_counter = 0;
@@ -185,10 +188,8 @@
                             fillColor: '#ca4c4d',
                             color: '#ca4c4d'
                         });
-
                     }
-
-                    polygon_counter++
+                    polygon_counter++;
                 }
             }
         }
@@ -206,23 +207,27 @@
     });
 
     map.on('draw:edited', function (e) {
-        // Layers list.
-        var layers = drawnItems.getLayers();
+        // draw:edited gets called after saving edition, BUT before draw:editstop
+        //(i.e. draw:editstop is called after both save and cancel edit).
+        // So our custom logic that we want to implement after saving edition
+        // should go in draw:editstop.
 
-        if (layers.length > 1) {
-            var polygons = get_cleaned_polygons(layers);
-            var trouble_polygons = check_after_drawing(polygons)
+        isEditionSaved = true;
+    });
 
-            // Set default color to every polygon (assume they are correct).
-            for (var key in drawnItems._layers) {
-                drawnItems._layers[key].setStyle({
-                    fillColor: '#FFA500',
-                    color: '#FFA500'
-                });
-            }
+    map.on('draw:editstop', function (e) {
+        // If edition is saved do the checking process,
+        // if not (i.e. canceled ) just pass.
+        if (isEditionSaved == true) {
+            // Layers list.
+            var layers = drawnItems.getLayers();
 
-            // Set "error" color to trouble polygons.
-            if (trouble_polygons.length > 0) {
+            if (layers.length > 1) {
+                var polygons = get_cleaned_polygons(layers);
+                var trouble_polygons = check_after_drawing(polygons);
+
+                // Set "error" color to trouble polygons and default color to
+                // regular polygons.
                 var polygon_counter = 0;
 
                 for (var key in drawnItems._layers) {
@@ -231,16 +236,22 @@
                             fillColor: '#ca4c4d',
                             color: '#ca4c4d'
                         });
+                    } else {
+                        // Set default color.
+                        drawnItems._layers[key].setStyle({
+                            fillColor: '#FFA500',
+                            color: '#FFA500'
+                        });
                     }
-
-                    polygon_counter++
+                    polygon_counter++;
                 }
             }
-        }
 
-        // layers.eachLayer(function (layer) {
-        //     $('#id_area_of_interest').val(JSON.stringify(layer.toGeoJSON()['geometry']));
-        // });
+            // layers.eachLayer(function (layer) {
+            //     $('#id_area_of_interest').val(JSON.stringify(layer.toGeoJSON()['geometry']));
+            // });
+        }
+        isEditionSaved = false;
     });
 
     map.on('draw:deleted', function (e) {
