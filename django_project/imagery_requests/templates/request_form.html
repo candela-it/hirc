@@ -74,6 +74,7 @@
             {% endif %}
           </div>
           {{ form.area_of_interest }}
+          {{ form.multipolygon_errors }}
           <label>Question set:</label>
           {% for radio in form.question_set %}
             <div class="field">
@@ -102,30 +103,45 @@
   <script type="text/javascript">
     $('#menu_imagery').addClass('active');
     $('.ui.radio.checkbox')
-      .checkbox()
-    ;
+      .checkbox();
+
     initMap();
-    // Initialise the FeatureGroup to store editable layers
 
+    // Initialise the FeatureGroup to store editable layers.
+    var drawnItems = new L.FeatureGroup();
 
-    if ( $('#id_area_of_interest').val() != '') {
-      //drawnItems.clearLayers();
-      polygon = $('#id_area_of_interest').val();
-      // if polygon is in geojson
-      if (polygon[0] == '{') {
-        geojsonFeature = jQuery.parseJSON(polygon);
-        var drawnItems = L.geoJson(geojsonFeature);
-      } else {
-        var drawnItems = omnivore.wkt.parse(polygon);
-      }
-      map.fitBounds(drawnItems.getBounds());
-    } else {
-      var drawnItems = new L.FeatureGroup();
-    }
     drawnItems.on('layeradd', function() {
-      map.fitBounds(drawnItems.getBounds());
+        map.fitBounds(drawnItems.getBounds());
     });
+
+    // If area exists (i.e. we are editing previously saved request).
+    if ( $('#id_area_of_interest').val() != '') {
+        var polygon = $('#id_area_of_interest').val();
+        // if polygon is in geojson
+        if (polygon[0] == '{') {
+            var geojsonFeature = jQuery.parseJSON(polygon);
+            var parsed_polygon = L.geoJson(geojsonFeature)
+
+            // Add multipolygon parts separately to use leaflet draw features.
+            jQuery.each(parsed_polygon._layers, function(index_1, obj_1) {
+                jQuery.each(obj_1._layers, function(index_2, obj_2) {
+                    drawnItems.addLayer(obj_2);
+                });
+            });
+        } else {
+            // polygon is in wkt.
+            var parsed_polygon = omnivore.wkt.parse(polygon);
+            // Add multipolygon parts separately to use leaflet draw features.
+            jQuery.each(parsed_polygon._layers, function(index_1, obj_1) {
+                jQuery.each(obj_1._layers, function(index_2, obj_2) {
+                    drawnItems.addLayer(obj_2);
+                });
+            });
+        }
+    }
+
     map.addLayer(drawnItems);
+
     // Initialise the draw control and pass it the FeatureGroup of editable layers
     var drawControl = new L.Control.Draw({
       draw: {
@@ -165,6 +181,7 @@
 
         drawnItems.addLayer(layer);
 
+        var trouble_polygons = []
         // Layers list.
         var layers = drawnItems.getLayers();
 
@@ -196,8 +213,24 @@
             }
         }
 
-        // dump to textarea
-        $('#id_area_of_interest').val(JSON.stringify(layer.toGeoJSON()['geometry']));
+
+        // Dump geojson to textarea.
+        var geojson_string = create_geojson_multipolygon_string();
+        $('#id_area_of_interest').val(geojson_string);
+
+        if (trouble_polygons.length == 0) {
+            // Empty multipolygon errors field.
+            $('#id_multipolygon_errors').val('');
+        } else {
+            // Put multipolygon errors text in textarea.
+            error_string = '';
+
+            jQuery.each(error_messages, function() {
+                error_string += this + ' ';
+            });
+
+            $('#id_multipolygon_errors').val(error_string);
+        }
 
         // Set previuos_point var to null because next polygon won't have
         // previous_point immediately.
@@ -250,20 +283,29 @@
                 polygon_counter++;
             }
 
-            // layers.eachLayer(function (layer) {
-            //     $('#id_area_of_interest').val(JSON.stringify(layer.toGeoJSON()['geometry']));
-            // });
+            // Dump geojson to textarea.
+            var geojson_string = create_geojson_multipolygon_string();
+            $('#id_area_of_interest').val(geojson_string);
+
+            if (trouble_polygons.length == 0) {
+                // Empty multipolygon errors field.
+                $('#id_multipolygon_errors').val('');
+            } else {
+                // Put multipolygon errors text in textarea.
+                error_string = '';
+
+                jQuery.each(error_messages, function() {
+                    error_string += this + ' ';
+                });
+
+                $('#id_multipolygon_errors').val(error_string);
+            }
         }
 
         isEditionSaved = false;
     });
 
     map.on('draw:deleted', function (e) {
-        // var layers = e.layers;
-        // layers.eachLayer(function (layer) {
-        //     $('#id_area_of_interest').val('');
-        // });
-
         // Layers list.
         var layers = drawnItems.getLayers();
         var polygons = get_cleaned_polygons(layers);
@@ -291,6 +333,32 @@
             }
 
             polygon_counter++;
+        }
+
+        // if (trouble_polygons.length == 0) {
+        if (layers.length == 0) {
+            // Empty area_of_interest text area.
+            $('#id_area_of_interest').val('');
+            // Empty multipolygon errors field.
+            $('#id_multipolygon_errors').val('');
+        } else {
+            // Dump geojson to textarea.
+            var geojson_string = create_geojson_multipolygon_string();
+            $('#id_area_of_interest').val(geojson_string);
+
+            if (trouble_polygons.length == 0) {
+                // Empty multipolygon errors field.
+                $('#id_multipolygon_errors').val('');
+            } else {
+                // Put multipolygon errors text in textarea.
+                error_string = '';
+
+                jQuery.each(error_messages, function() {
+                    error_string += this + ' ';
+                });
+
+                $('#id_multipolygon_errors').val(error_string);
+            }
         }
     });
 
@@ -538,6 +606,24 @@
             if (intersect) inside = !inside;
         }
         return inside;
+    }
+
+    function create_geojson_multipolygon_string() {
+        var geojson_string = '{"type": "MultiPolygon","coordinates": [';
+
+        for (var key in drawnItems._layers) {
+            var layer = drawnItems._layers[key];
+            geojson_string += JSON.stringify(layer.toGeoJSON()['geometry']['coordinates']) + ',';
+        }
+
+        geojson_string = geojson_string.slice(0, -1);  // remove last comma.
+        geojson_string += ']}';  // finish geojson string.
+
+        return geojson_string
+    }
+
+    function create_geojson_polygon_string() {
+        var geojson_string = '{"type": "Polygon","coordinates": [';
     }
 
   </script>
