@@ -164,12 +164,49 @@
             featureGroup: drawnItems
         }
     });
+
     map.addControl(drawControl);
+
+    // Initial vars for custom error tooltip.
+    errorShown = false;
+    custom_tooltip = null;
+    hideErrorTimeout = null;
+
+    function show_custom_tooltip(error_string) {
+        // Hide error tooltip if exists.
+        hideErrorTooltip();
+
+        custom_tooltip = new L.Tooltip(map);
+        custom_tooltip.updateContent({text: error_string});
+        custom_tooltip.showAsError();
+        errorShown = true;
+        // Hide the error after 2 seconds
+        hideErrorTimeout = setTimeout(L.Util.bind(hideErrorTooltip), 4000);
+    }
+
+    function hideErrorTooltip() {
+        errorShown = false;
+        if (custom_tooltip) {
+            clearHideErrorTimeout();
+            custom_tooltip.dispose();
+            custom_tooltip = null;
+        }
+    }
+
+    function clearHideErrorTimeout() {
+        if (hideErrorTimeout) {
+            clearTimeout(hideErrorTimeout);
+            hideErrorTimeout = null;
+        }
+    }
 
     // Signal if drawing is activated. Initially it's not active.
     var drawIsActive = false;
     // Signal if edition is saved. Used for draw:editstop event.
     var isEditionSaved = false;
+    // Initial vars for multipolygon checks during drawing.
+    var previous_point = null;
+    var current_point = null;
 
     map.on('draw:drawstart', function (e) {
       drawIsActive = true;
@@ -181,9 +218,8 @@
 
         drawnItems.addLayer(layer);
 
-        var trouble_polygons = []
-        // Layers list.
-        var layers = drawnItems.getLayers();
+        var trouble_polygons = [];
+        var layers = drawnItems.getLayers();  // Layers list.
 
         // Check after drawing: line segments intersection; point in another polygon;
         // polygon overlaps another polygon.
@@ -198,6 +234,7 @@
             var trouble_polygons = result.trouble_polygons;
             var error_messages = result.error_messages;
 
+            // If there are trouble polygons make them red.
             if (trouble_polygons.length > 0) {
                 var polygon_counter = 0;
 
@@ -212,7 +249,6 @@
                 }
             }
         }
-
 
         // Dump geojson to textarea.
         var geojson_string = create_geojson_multipolygon_string();
@@ -230,6 +266,9 @@
             });
 
             $('#id_multipolygon_errors').val(error_string);
+
+            // Show error tooltip.
+            show_custom_tooltip(error_string);
         }
 
         // Set previuos_point var to null because next polygon won't have
@@ -254,8 +293,7 @@
         // If edition is saved do the checking process,
         // if not (i.e. canceled ) just pass.
         if (isEditionSaved == true) {
-            // Layers list.
-            var layers = drawnItems.getLayers();
+            var layers = drawnItems.getLayers();  // Layers list.
             var polygons = get_cleaned_polygons(layers);
 
             var result = check_after_drawing(polygons);
@@ -299,6 +337,9 @@
                 });
 
                 $('#id_multipolygon_errors').val(error_string);
+
+                // Show error tooltip.
+                show_custom_tooltip(error_string);
             }
         }
 
@@ -306,8 +347,7 @@
     });
 
     map.on('draw:deleted', function (e) {
-        // Layers list.
-        var layers = drawnItems.getLayers();
+        var layers = drawnItems.getLayers();  // Layers list.
         var polygons = get_cleaned_polygons(layers);
 
         var result = check_after_drawing(polygons);
@@ -335,7 +375,6 @@
             polygon_counter++;
         }
 
-        // if (trouble_polygons.length == 0) {
         if (layers.length == 0) {
             // Empty area_of_interest text area.
             $('#id_area_of_interest').val('');
@@ -358,12 +397,12 @@
                 });
 
                 $('#id_multipolygon_errors').val(error_string);
+
+                // Show error tooltip.
+                show_custom_tooltip(error_string);
             }
         }
     });
-
-    var previous_point = null;
-    var current_point = null;
 
     map.on('click', function(e) {
         // If drawing is activated check if new point is inside existing polygon or
@@ -398,6 +437,8 @@
                                 $('.leaflet-draw-actions li a:first')[0].click();
                                 // Revert value of current_point to previous_point.
                                 current_point = previous_point;
+                                // Show error tooltip.
+                                show_custom_tooltip("Area shouldn't intersect with another area.")
                                 return false; // break jquery each loop and current loop
                             }
                         }
@@ -409,6 +450,8 @@
                         if (pointIsInPolygon == true) {
                             // Programatically click link to delete created vertex.
                             $('.leaflet-draw-actions li a:eq(1)')[0].click();
+                            // Show error tooltip.
+                            show_custom_tooltip("Can't place point inside polygon.")
                             return false; // break jquery each loop
                         }
                     }
@@ -416,6 +459,12 @@
             }
             // Set value of previous point to current_point for future.
             previous_point = current_point;
+        }
+    });
+
+    map.on('mousemove', function(e) {
+        if (errorShown) {
+            custom_tooltip.updatePosition(e.latlng);
         }
     });
 
@@ -431,7 +480,7 @@
 
     function check_after_drawing(polygons) {
         var trouble_polygons = [];
-        var error_messages = []
+        var error_messages = [];
 
         // Check if any polygon intersects any other polygon.
         // Check if any polygon covers any other polygon.
@@ -478,7 +527,7 @@
     // Check if any line segment of any polygon intersects with any line
     // segment of any other polygon.
     function polygon_intersects_polygon(error_messages, trouble_polygons, poly_a, index_a, poly_b, index_b) {
-        var error_message = "Area shouldn't intersect with another area."
+        var error_message = "Area shouldn't intersect with another area.";
 
         for (var k = 0, h = poly_a.length - 1; k < poly_a.length; h = k++) {
             var p_1a = {x: poly_a[k][0], y: poly_a[k][1]};
@@ -515,7 +564,7 @@
     // Check if any polygon covers any other polygon. We're actually checking
     // if point from one polygon lies inside another polygon.
     function polygon_covers_polygon(error_messages, trouble_polygons, poly_a, index_a, poly_b, index_b) {
-        var error_message = "Area shouldn't cover another area."
+        var error_message = "Area shouldn't cover another area.";
 
         jQuery.each(poly_a, function(point_index, point) {
             var pointIsInPolygon = point_in_polygon(point, poly_b);
@@ -542,7 +591,7 @@
     }
 
     function polygon_intersects_itself(error_messages, trouble_polygons, poly_a, index_a) {
-        var error_message = "Area shouldn't intersect with itself."
+        var error_message = "Area shouldn't intersect with itself.";
 
         for (var i = 0, j = poly_a.length - 1; i < poly_a.length; j = i++) {
             var p_1 = {x: poly_a[i][0], y: poly_a[i][1]}
@@ -574,6 +623,22 @@
         }
     }
 
+    // Function that checks if point is inside polygon.
+    function point_in_polygon (point, polygon) {
+        var x = point[0], y = point[1];
+
+        var inside = false;
+        for (var i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+            var xi = polygon[i][0], yi = polygon[i][1];
+            var xj = polygon[j][0], yj = polygon[j][1];
+
+            var intersect = ((yi > y) != (yj > y))
+                && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+            if (intersect) inside = !inside;
+        }
+        return inside;
+    }
+
     function get_cleaned_polygons(layers) {
         var polygons = [];
 
@@ -590,22 +655,6 @@
         });
 
         return polygons;
-    }
-
-    // Function that checks if point is inside polygon.
-    function point_in_polygon (point, polygon) {
-        var x = point[0], y = point[1];
-
-        var inside = false;
-        for (var i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-            var xi = polygon[i][0], yi = polygon[i][1];
-            var xj = polygon[j][0], yj = polygon[j][1];
-
-            var intersect = ((yi > y) != (yj > y))
-                && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
-            if (intersect) inside = !inside;
-        }
-        return inside;
     }
 
     function create_geojson_multipolygon_string() {
