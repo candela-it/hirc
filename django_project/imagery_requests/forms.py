@@ -12,7 +12,8 @@ class ImageryRequestForm(forms.ModelForm):
         error_messages={'required': 'Please select an area of interest.'}
     )
     multipolygon_errors = forms.CharField(
-        widget=forms.Textarea({'hidden': ''})
+        widget=forms.Textarea({'hidden': ''}),
+        required=False
     )
 
     class Meta:
@@ -59,7 +60,8 @@ class ImageryRequestEditForm(forms.ModelForm):
         error_messages={'required': 'Please select an area of interest.'}
     )
     multipolygon_errors = forms.CharField(
-        widget=forms.Textarea({'hidden': ''})
+        widget=forms.Textarea({'hidden': ''}),
+        required=False
     )
 
     class Meta:
