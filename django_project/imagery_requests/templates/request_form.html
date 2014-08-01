@@ -74,6 +74,7 @@
             {% endif %}
           </div>
           {{ form.area_of_interest }}
+          {{ form.multipolygon_errors }}
           <label>Question set:</label>
           {% for radio in form.question_set %}
             <div class="field">
@@ -102,86 +103,10 @@
   <script type="text/javascript">
     $('#menu_imagery').addClass('active');
     $('.ui.radio.checkbox')
-      .checkbox()
-    ;
+      .checkbox();
+
     initMap();
-    // Initialise the FeatureGroup to store editable layers
-
-
-    if ( $('#id_area_of_interest').val() != '') {
-      //drawnItems.clearLayers();
-      polygon = $('#id_area_of_interest').val();
-      // if polygon is in geojson
-      if (polygon[0] == '{') {
-        geojsonFeature = jQuery.parseJSON(polygon);
-        var drawnItems = L.geoJson(geojsonFeature);
-      } else {
-        var drawnItems = omnivore.wkt.parse(polygon);
-      }
-      map.fitBounds(drawnItems.getBounds());
-    } else {
-      var drawnItems = new L.FeatureGroup();
-    }
-    drawnItems.on('layeradd', function() {
-      map.fitBounds(drawnItems.getBounds());
-    });
-    map.addLayer(drawnItems);
-    // Initialise the draw control and pass it the FeatureGroup of editable layers
-    var drawControl = new L.Control.Draw({
-      draw: {
-        polygon: {
-          allowIntersection: false,
-          drawError: {
-                    color: '#e1e100',
-                    message: 'Draw normal polygons!'
-                },
-                shapeOptions: {
-                    color: '#FFA500'
-                }
-        },
-            polyline: false,
-            rectangle: false,
-            circle: false,
-            marker: false,
-      },
-        edit: {
-            featureGroup: drawnItems
-        }
-    });
-    map.addControl(drawControl);
-
-    map.on('draw:created', function (e) {
-        var type = e.layerType;
-        var layer = e.layer;
-
-        // delete previous layer
-        drawnItems.clearLayers();
-
-        drawnItems.addLayer(layer);
-
-        // dump to textarea
-        $('#id_area_of_interest').val(JSON.stringify(layer.toGeoJSON()['geometry']));
-    });
-
-    map.on('draw:drawstop', function (e) {
-      var type = e.layerType;
-    });
-
-    map.on('draw:edited', function (e) {
-        var layers = e.layers;
-        layers.eachLayer(function (layer) {
-            $('#id_area_of_interest').val(JSON.stringify(layer.toGeoJSON()['geometry']));
-        });
-    });
-
-    map.on('draw:deleted', function (e) {
-        var layers = e.layers;
-        layers.eachLayer(function (layer) {
-            $('#id_area_of_interest').val('');
-        });
-    });
-
-    //map.fitBounds(drawnItems.getBounds());
+    initRequestFormMap();
 
   </script>
 {% endblock %}

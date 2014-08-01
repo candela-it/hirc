@@ -11,6 +11,10 @@ class ImageryRequestForm(forms.ModelForm):
         widget=forms.Textarea({'hidden': ''}),
         error_messages={'required': 'Please select an area of interest.'}
     )
+    multipolygon_errors = forms.CharField(
+        widget=forms.Textarea({'hidden': ''}),
+        required=False
+    )
 
     class Meta:
         model = ImageryRequest
@@ -34,9 +38,31 @@ class ImageryRequestForm(forms.ModelForm):
             {'required': 'Please select a question set.'}
         )
 
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        cleaned_area_of_interest = cleaned_data.get('area_of_interest')
+
+        if cleaned_area_of_interest:
+            multipolygon_errors = cleaned_data.get('multipolygon_errors')
+
+            if multipolygon_errors:
+                msg = 'Fix errors. ' + multipolygon_errors
+                self._errors['area_of_interest'] = self.error_class([msg])
+
+                del cleaned_data['area_of_interest']
+
+        return cleaned_data
+
 
 class ImageryRequestEditForm(forms.ModelForm):
-    area_of_interest = forms.CharField(widget=forms.Textarea({'hidden': ''}))
+    area_of_interest = forms.CharField(
+        widget=forms.Textarea({'hidden': ''}),
+        error_messages={'required': 'Please select an area of interest.'}
+    )
+    multipolygon_errors = forms.CharField(
+        widget=forms.Textarea({'hidden': ''}),
+        required=False
+    )
 
     class Meta:
         model = ImageryRequest
@@ -65,6 +91,21 @@ class ImageryRequestEditForm(forms.ModelForm):
         self.fields['question_set'].widget.choices = (
             self.fields['question_set'].choices
         )
+
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        cleaned_area_of_interest = cleaned_data.get('area_of_interest')
+
+        if cleaned_area_of_interest:
+            multipolygon_errors = cleaned_data.get('multipolygon_errors')
+
+            if multipolygon_errors:
+                msg = 'Fix errors. ' + multipolygon_errors
+                self._errors['area_of_interest'] = self.error_class([msg])
+
+                del cleaned_data['area_of_interest']
+
+        return cleaned_data
 
 
 class RequestDateForm(forms.ModelForm):

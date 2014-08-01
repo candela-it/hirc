@@ -116,7 +116,7 @@ class ImageryRequest(TimeStampedModelMixin, models.Model):
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL, related_name='created'
     )
-    area_of_interest = models.PolygonField(
+    area_of_interest = models.MultiPolygonField(
         srid=4326, help_text='Imagery request area of interest'
     )
     status = models.ForeignKey(
