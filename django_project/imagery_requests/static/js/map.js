@@ -176,8 +176,8 @@ function initRequestFormMap() {
     });
 
     // If area exists (i.e. we are editing previously saved request).
-    if ( $('#id_area_of_interest').val() != '') {
-        var polygon = $('#id_area_of_interest').val();
+    if ( jQuery('#id_area_of_interest').val() != '') {
+        var polygon = jQuery('#id_area_of_interest').val();
         // if polygon is in geojson
         if (polygon[0] == '{') {
             var geojsonFeature = jQuery.parseJSON(polygon);
@@ -242,7 +242,7 @@ function initRequestFormMap() {
         custom_tooltip.showAsError();
         errorShown = true;
         // Hide the error after 2 seconds
-        hideErrorTimeout = setTimeout(L.Util.bind(hideErrorTooltip), 4000);
+        hideErrorTimeout = setTimeout(L.Util.bind(hideErrorTooltip), 2000);
     }
 
     function hideErrorTooltip() {
@@ -313,11 +313,11 @@ function initRequestFormMap() {
 
         // Dump geojson to textarea.
         var geojson_string = create_geojson_multipolygon_string();
-        $('#id_area_of_interest').val(geojson_string);
+        jQuery('#id_area_of_interest').val(geojson_string);
 
         if (trouble_polygons.length == 0) {
             // Empty multipolygon errors field.
-            $('#id_multipolygon_errors').val('');
+            jQuery('#id_multipolygon_errors').val('');
         } else {
             // Put multipolygon errors text in textarea.
             error_string = '';
@@ -326,7 +326,7 @@ function initRequestFormMap() {
                 error_string += this + ' ';
             });
 
-            $('#id_multipolygon_errors').val(error_string);
+            jQuery('#id_multipolygon_errors').val(error_string);
 
             // Show error tooltip.
             show_custom_tooltip(error_string);
@@ -339,6 +339,9 @@ function initRequestFormMap() {
 
     map.on('draw:drawstop', function (e) {
       drawIsActive = false;
+
+      current_point = null;
+      previous_point = null;
     });
 
     map.on('draw:edited', function (e) {
@@ -384,11 +387,11 @@ function initRequestFormMap() {
 
             // Dump geojson to textarea.
             var geojson_string = create_geojson_multipolygon_string();
-            $('#id_area_of_interest').val(geojson_string);
+            jQuery('#id_area_of_interest').val(geojson_string);
 
             if (trouble_polygons.length == 0) {
                 // Empty multipolygon errors field.
-                $('#id_multipolygon_errors').val('');
+                jQuery('#id_multipolygon_errors').val('');
             } else {
                 // Put multipolygon errors text in textarea.
                 error_string = '';
@@ -397,7 +400,7 @@ function initRequestFormMap() {
                     error_string += this + ' ';
                 });
 
-                $('#id_multipolygon_errors').val(error_string);
+                jQuery('#id_multipolygon_errors').val(error_string);
 
                 // Show error tooltip.
                 show_custom_tooltip(error_string);
@@ -438,17 +441,17 @@ function initRequestFormMap() {
 
         if (layers.length == 0) {
             // Empty area_of_interest text area.
-            $('#id_area_of_interest').val('');
+            jQuery('#id_area_of_interest').val('');
             // Empty multipolygon errors field.
-            $('#id_multipolygon_errors').val('');
+            jQuery('#id_multipolygon_errors').val('');
         } else {
             // Dump geojson to textarea.
             var geojson_string = create_geojson_multipolygon_string();
-            $('#id_area_of_interest').val(geojson_string);
+            jQuery('#id_area_of_interest').val(geojson_string);
 
             if (trouble_polygons.length == 0) {
                 // Empty multipolygon errors field.
-                $('#id_multipolygon_errors').val('');
+                jQuery('#id_multipolygon_errors').val('');
             } else {
                 // Put multipolygon errors text in textarea.
                 error_string = '';
@@ -457,7 +460,7 @@ function initRequestFormMap() {
                     error_string += this + ' ';
                 });
 
-                $('#id_multipolygon_errors').val(error_string);
+                jQuery('#id_multipolygon_errors').val(error_string);
 
                 // Show error tooltip.
                 show_custom_tooltip(error_string);
@@ -494,8 +497,8 @@ function initRequestFormMap() {
                             var intersects = L.LineUtil.segmentsIntersect(p1, p2, p3, p4);
 
                             if (intersects == true) {
-                                // Programatically click link to delete the last vertex.
-                                $('.leaflet-draw-actions li a:first')[0].click();
+                                // Delete the last vertex.
+                                drawControl._toolbars['draw']._modes.polygon.handler.deleteLastVertex();
                                 // Revert value of current_point to previous_point.
                                 current_point = previous_point;
                                 // Show error tooltip.
@@ -509,8 +512,8 @@ function initRequestFormMap() {
                         // If current point is inside existing polygon then delete
                         // that point and show error message.
                         if (pointIsInPolygon == true) {
-                            // Programatically click link to delete created vertex.
-                            $('.leaflet-draw-actions li a:eq(1)')[0].click();
+                            // Cancel drawing polygon.
+                            drawControl._toolbars['draw']._modes.polygon.handler.disable();
                             // Show error tooltip.
                             show_custom_tooltip("Can't place point inside polygon.")
                             return false; // break jquery each loop
@@ -529,15 +532,6 @@ function initRequestFormMap() {
         }
     });
 
-    // When link for drawing polygon is clicked then add event listener for 'cancel' link.
-    $('.leaflet-draw-section .leaflet-draw-toolbar a:eq(0)').on('click', function() {
-          // When cancel drawing link is clicked (either programatically or manually)
-          // reset value of current point and previous point.
-          $('.leaflet-draw-actions li a:eq(1)').on('click', function() {
-              current_point = null;
-              previous_point = null;
-          });
-    });
 
     function check_after_drawing(polygons) {
         var trouble_polygons = [];
